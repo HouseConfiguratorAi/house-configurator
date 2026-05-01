@@ -28,24 +28,17 @@ export async function POST(req: NextRequest) {
     const Replicate = (await import('replicate')).default;
     const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
-    // Strip the data URL prefix to get raw base64
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-    const imageBuffer = Buffer.from(base64Data, 'base64');
 
-    // Use SDXL img2img via Replicate
     const output = await replicate.run(
-      'stability-ai/sdxl:7762fd07cf82c948538e41f63f77d685e02b063e37291fae01d7b3b70a1aabdb',
+      'timothybrooks/instruct-pix2pix:30c1d0b916a6f8efce20493f5d61ee27491ab2a6ced8c7c35e58e7f9f8f6a0a',
       {
         input: {
           prompt,
-          negative_prompt: negativePrompt,
           image: `data:image/jpeg;base64,${base64Data}`,
-          strength: 0.45,          // low = preserve more structure
+          num_inference_steps: 50,
+          image_guidance_scale: 1.5,
           guidance_scale: 7.5,
-          num_inference_steps: 40,
-          width: 1024,
-          height: 768,
-          scheduler: 'K_EULER',
         },
       }
     );
