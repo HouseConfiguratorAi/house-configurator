@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
-import Link from 'next/link';
+
 
 /* ================================================================
    TYPES
@@ -905,13 +905,6 @@ function StepResult({ photoUrl, resultUrl, scopes, config, onRestart, onAdjust }
         }}>
           ✏️ Aanpassen
         </button>
-        <Link href="/offerte" style={{
-          padding: '14px 28px', borderRadius: 100, fontSize: 15, fontWeight: 600,
-          background: T.accentSoft, color: T.accentDeep, textAlign: 'center',
-          textDecoration: 'none', display: 'inline-block', fontFamily: font,
-        }}>
-          📄 Offerte aanmaken
-        </Link>
       </div>
     </div>
   );
