@@ -181,10 +181,10 @@ function ProjectenTab({ savedVersions }: { savedVersions: SavedVersion[] }) {
                   <span>·</span>
                   <span>{new Date(v.createdAt).toLocaleDateString('nl-NL')}</span>
                 </div>
-                {v.config.gevelbekleding && (
+                {v.config.facadeMaterial && (
                   <div className="mt-2 text-xs text-gray-500">
-                    {v.config.gevelbekleding}
-                    {v.config.gevelkleur ? ` · ${v.config.gevelkleur}` : ''}
+                    {v.config.facadeMaterial}
+                    {v.config.facade ? ` · ${v.config.facade}` : ''}
                   </div>
                 )}
               </div>
