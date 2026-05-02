@@ -28,7 +28,7 @@ const Input = ({ label, value, onChange, placeholder = '', type = 'text', classN
 export default function OffertePage() {
   const router = useRouter();
   const { originalImage, generatedImage, config } = useHouseStore();
-  const { offerte, setBedrijf, setKlant, setRegel, addRegel, removeRegel, setRegels, setNotities, setBetalingstermijn, setGeldigTot, setDatum } = useOfferteStore();
+  const { offerte, setBedrijf, setKlant, setRegel, addRegel, removeRegel, setRegels, setNotities, setBetalingstermijn, setGeldigTot, setDatum, setExtraVoorwaarden } = useOfferteStore();
   const [section, setSection] = useState<Section>('bedrijf');
   const [initialized, setInitialized] = useState(false);
 
@@ -304,7 +304,7 @@ export default function OffertePage() {
               </div>
               <div>
                 <label className="block text-gray-500 text-[10px] uppercase tracking-widest mb-1">Algemene voorwaarden</label>
-                <textarea value={offerte.extraVoorwaarden} onChange={(e) => useOfferteStore.getState().setExtraVoorwaarden(e.target.value)}
+                <textarea value={offerte.extraVoorwaarden} onChange={(e) => setExtraVoorwaarden(e.target.value)}
                   rows={4} placeholder="Uw algemene voorwaarden…"
                   className="w-full bg-surface-elevated border border-white/8 rounded-xl px-3 py-2.5 text-white text-sm placeholder-gray-700 outline-none focus:border-accent/50 resize-none" />
               </div>

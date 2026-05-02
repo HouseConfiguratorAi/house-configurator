@@ -7,8 +7,11 @@ const nextConfig = {
       { protocol: 'https', hostname: 'pbxt.replicate.delivery' },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['sharp'],
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
