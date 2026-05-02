@@ -9,40 +9,90 @@ import Link from 'next/link';
 type Step = 1 | 2 | 3 | 'loading' | 'result';
 
 interface Config {
-  dak: { type: string | null; bedekking: string | null; kleur: string | null; extras: string[] };
-  gevel: { afwerking: string | null; gevels: string[]; kleur: string | null; extras: string[] };
+  dak: {
+    type: string | null;
+    bedekking: string | null;
+    kleur: string | null;
+    extras: string[];
+    zonnepanelen: string | null;
+    dakkapel: string | null;
+    dakgoot: string | null;
+  };
+  gevel: {
+    afwerking: string | null;
+    gevels: string[];
+    kleur: string | null;
+    extras: string[];
+    ramen: string | null;
+    deur: string | null;
+    deurkleur: string | null;
+  };
 }
 interface Scopes { dak: boolean; gevel: boolean; }
 
 /* ================================================================
    OPTIONS
    ================================================================ */
-const DAK_TYPES = ['Zadeldak', 'Plat dak', 'Schilddak', 'Mansardedak'];
-const DAK_BEDEKKING = ['Dakpannen', 'Leien', 'EPDM', 'Roofing/bitumen', 'Metalen dakpanelen'];
+const DAK_TYPES = ['Zadeldak', 'Plat dak', 'Schilddak', 'Mansardedak', 'Tentdak', 'Lessenaarsdak', 'Vlinderdak'];
+const DAK_BEDEKKING = ['Dakpannen', 'Leien', 'EPDM', 'Roofing/bitumen', 'Metalen dakpanelen', 'Groendak', 'Zink', 'Keramische pannen', 'Betonpannen'];
 const DAK_KLEUREN = [
   { name: 'Antraciet', hex: '#2d3033' },
   { name: 'Zwart', hex: '#0e0e0e' },
   { name: 'Roodbruin', hex: '#7d3a25' },
-  { name: 'Grijs', hex: '#7a7d80' },
+  { name: 'Donkergrijs', hex: '#7a7d80' },
   { name: 'Terracotta', hex: '#b85c3a' },
+  { name: 'Leisteengrijs', hex: '#4a5568' },
+  { name: 'Bruin', hex: '#6b4226' },
+  { name: 'Groengrijs', hex: '#4a5e52' },
+  { name: 'Rood', hex: '#9b2335' },
+  { name: 'Naturel', hex: '#c4a882' },
 ];
-const DAK_EXTRAS = ['Dakgoten vervangen', 'Isolatie toevoegen', 'Dakkapel behouden', 'Zonnepanelen behouden'];
+const DAK_EXTRAS = [
+  'Dakgoten vervangen', 'Isolatie toevoegen', 'Dakkapel toevoegen',
+  'Dakraam toevoegen', 'Schoorstenen behouden', 'Regenwaterput',
+  'Zonneboiler integreren', 'Ventilatieopeningen',
+];
+const DAK_ZONNEPANELEN = ['Geen', '4 panelen', '6 panelen', '8 panelen', '10 panelen', '12 panelen', '16 panelen', '20+ panelen'];
+const DAK_KAPEL = ['Geen dakkapel', 'Kleine dakkapel', 'Grote dakkapel', 'Dakkapel met terras', 'Meerdere dakkapellen'];
+const DAK_GOOT = ['Zink', 'Aluminium', 'PVC', 'Koper', 'Staal'];
 
-const GEVEL_AFWERKING = ['Crepi', 'Gevelpleister', 'Houten gevelbekleding', 'Steenstrips', 'Gevelpanelen', 'Schilderwerk'];
+const GEVEL_AFWERKING = ['Crepi', 'Gevelpleister', 'Houten gevelbekleding', 'Steenstrips', 'Gevelpanelen', 'Schilderwerk', 'Baksteen', 'Natuursteen', 'Composiet', 'Betonlook'];
 const GEVEL_GEVELS = ['Voorgevel', 'Achtergevel', 'Linkergevel', 'Rechtergevel', 'Alle gevels'];
 const GEVEL_KLEUREN = [
   { name: 'Wit', hex: '#f5f2ea' },
   { name: 'Crème', hex: '#ede4d3' },
   { name: 'Lichtgrijs', hex: '#cccdc8' },
   { name: 'Donkergrijs', hex: '#5a5d60' },
+  { name: 'Antraciet', hex: '#2d3033' },
   { name: 'Beige', hex: '#c8b89a' },
   { name: 'Zandkleur', hex: '#d8c79e' },
+  { name: 'Taupe', hex: '#b5a898' },
+  { name: 'Olijfgroen', hex: '#6b7c5c' },
+  { name: 'Terracotta', hex: '#c8553d' },
+  { name: 'Okergeel', hex: '#d4a843' },
+  { name: 'Zwart', hex: '#1a1a1a' },
 ];
-const GEVEL_EXTRAS = ['Gevelisolatie toevoegen', 'Raamomlijsting behouden', 'Plint behouden', 'Regenpijpen behouden'];
+const GEVEL_EXTRAS = [
+  'Gevelisolatie toevoegen', 'Raamomlijsting behouden', 'Plint behouden',
+  'Regenpijpen behouden', 'Luiken toevoegen', 'Rolluiken toevoegen',
+  'Terrasoverkapping', 'Carport toevoegen',
+];
+const GEVEL_RAMEN = ['Huidig behouden', 'Houten ramen', 'PVC ramen wit', 'PVC ramen zwart', 'Aluminium ramen', 'Stalen ramen', 'Panoramaramen'];
+const GEVEL_DEUR = ['Huidig behouden', 'Voordeur klassiek', 'Voordeur modern', 'Voordeur staal', 'Voordeur hout', 'Draaideuren', 'Schuifdeuren'];
+const GEVEL_DEURKLEUREN = [
+  { name: 'Zwart', hex: '#1a1a1a' },
+  { name: 'Antraciet', hex: '#2d3033' },
+  { name: 'Wit', hex: '#f5f2ea' },
+  { name: 'Bordeaux', hex: '#6b2737' },
+  { name: 'Donkerblauw', hex: '#1e3a5f' },
+  { name: 'Groen', hex: '#2d5016' },
+  { name: 'Houtkleur', hex: '#8b5e3c' },
+  { name: 'Geel', hex: '#d4a017' },
+];
 
 const defaultConfig = (): Config => ({
-  dak: { type: null, bedekking: null, kleur: null, extras: [] },
-  gevel: { afwerking: null, gevels: [], kleur: null, extras: [] },
+  dak: { type: null, bedekking: null, kleur: null, extras: [], zonnepanelen: null, dakkapel: null, dakgoot: null },
+  gevel: { afwerking: null, gevels: [], kleur: null, extras: [], ramen: null, deur: null, deurkleur: null },
 });
 
 /* ================================================================
@@ -428,6 +478,27 @@ function Step3Config({
                   ))}
                 </div>
               </ConfigGroup>
+              <ConfigGroup label="☀️ Zonnepanelen — aantal">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {DAK_ZONNEPANELEN.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
+                  ))}
+                </div>
+              </ConfigGroup>
+              <ConfigGroup label="Dakkapel">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {DAK_KAPEL.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
+                  ))}
+                </div>
+              </ConfigGroup>
+              <ConfigGroup label="Dakgoot materiaal">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {DAK_GOOT.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.dak.dakgoot === opt} onClick={() => onDakChange('dakgoot', opt)} />
+                  ))}
+                </div>
+              </ConfigGroup>
               <ConfigGroup label="Extra opties">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                   {DAK_EXTRAS.map(opt => (
@@ -464,6 +535,27 @@ function Step3Config({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 10 }}>
                   {GEVEL_KLEUREN.map(c => (
                     <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.kleur === c.name} onClick={() => onGevelChange('kleur', c.name)} />
+                  ))}
+                </div>
+              </ConfigGroup>
+              <ConfigGroup label="🪟 Ramen">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {GEVEL_RAMEN.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
+                  ))}
+                </div>
+              </ConfigGroup>
+              <ConfigGroup label="🚪 Voordeur stijl">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {GEVEL_DEUR.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
+                  ))}
+                </div>
+              </ConfigGroup>
+              <ConfigGroup label="Kleur voordeur">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 10 }}>
+                  {GEVEL_DEURKLEUREN.map(c => (
+                    <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
                   ))}
                 </div>
               </ConfigGroup>
@@ -584,6 +676,9 @@ function StepResult({ photoUrl, resultUrl, scopes, config, onRestart, onAdjust }
               {row('Type', config.dak.type)}
               {row('Bedekking', config.dak.bedekking)}
               {row('Kleur', config.dak.kleur)}
+              {row('Zonnepanelen', config.dak.zonnepanelen)}
+              {row('Dakkapel', config.dak.dakkapel)}
+              {row('Dakgoot', config.dak.dakgoot)}
               {rowList('Extra', config.dak.extras)}
             </div>
           )}
@@ -594,6 +689,9 @@ function StepResult({ photoUrl, resultUrl, scopes, config, onRestart, onAdjust }
               {row('Afwerking', config.gevel.afwerking)}
               {rowList('Gevels', config.gevel.gevels)}
               {row('Kleur', config.gevel.kleur)}
+              {row('Ramen', config.gevel.ramen)}
+              {row('Voordeur', config.gevel.deur)}
+              {row('Deurkleur', config.gevel.deurkleur)}
               {rowList('Extra', config.gevel.extras)}
             </div>
           )}
