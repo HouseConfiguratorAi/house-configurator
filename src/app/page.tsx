@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
@@ -200,7 +200,7 @@ function Step1Upload({
         }}
       >
         <input
-          ref={fileRef}
+          ref={fileRef as React.LegacyRef<HTMLInputElement>}
           type="file"
           accept="image/jpeg,image/png,image/webp"
           style={{ display: 'none' }}
