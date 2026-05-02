@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useHouseStore } from '@/store/houseStore';
 import { useOfferteStore, formatEuro, formatDate, calcTotalen } from '@/store/offerteStore';
 import type { BedrijfInfo, Offerte } from '@/lib/offerteTypes';
+import type { SavedVersion } from '@/lib/types';
 
 type Tab = 'projecten' | 'offertes' | 'bedrijf' | 'instellingen';
 
@@ -126,16 +127,6 @@ export default function DashboardPage() {
 /* ------------------------------------------------------------------ */
 /* Projecten tab                                                        */
 /* ------------------------------------------------------------------ */
-interface SavedVersion {
-  id: string;
-  imageUrl: string;
-  label: string;
-  createdAt: number;
-  config: { gevelbekleding?: string; gevelkleur?: string };
-  lighting: string;
-  season: string;
-}
-
 function ProjectenTab({ savedVersions }: { savedVersions: SavedVersion[] }) {
   return (
     <div className="animate-fade-in">

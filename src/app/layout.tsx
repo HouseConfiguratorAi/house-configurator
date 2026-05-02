@@ -21,12 +21,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
-    >
+    <ClerkProvider>
       <html lang="nl" className="dark">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
