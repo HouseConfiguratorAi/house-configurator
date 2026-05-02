@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 /* ================================================================
    TYPES
@@ -758,15 +757,9 @@ export default function HomePage() {
           Renovision
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <SignedIn>
-            <Link href="/dashboard" style={{ fontSize: 13, color: T.inkSoft, textDecoration: 'none', fontWeight: 500, fontFamily: font }}>Dashboard</Link>
-            <UserButton />
-          </SignedIn>
-          <SignedOut>
-            <Link href="/sign-in" style={{ fontSize: 14, fontWeight: 600, background: T.ink, color: T.bg, padding: '8px 20px', borderRadius: 100, textDecoration: 'none', fontFamily: font }}>
-              Inloggen
-            </Link>
-          </SignedOut>
+          <span style={{ fontSize: 12, color: T.inkMuted, fontFamily: font, background: T.accentSoft, color: T.accentDeep, padding: '4px 12px', borderRadius: 100, fontWeight: 600 }}>
+            Demo
+          </span>
         </div>
       </header>
 

@@ -1,16 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Renovision — AI Woning Renovatie',
   description: 'Visualiseer je droomrenovatie in seconden. Upload een foto, kies kleuren en laat AI de rest doen.',
-  keywords: ['woning renovatie', 'AI configurator', 'gevel kleur', 'huis design'],
-  openGraph: {
-    title: 'Renovision',
-    description: 'AI-powered woning renovatie visualizer',
-    type: 'website',
-  },
 };
 
 export const viewport: Viewport = {
@@ -21,20 +14,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="nl">
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-          />
-        </head>
-        <body style={{ margin: 0, background: '#f5f3ee', fontFamily: "'Inter Tight', system-ui, sans-serif" }}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="nl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ margin: 0, background: '#f5f3ee', fontFamily: "'Inter Tight', system-ui, sans-serif" }}>
+        {children}
+      </body>
+    </html>
   );
 }
