@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useHouseStore } from '@/store/houseStore';
 import { useOfferteStore, formatEuro, formatDate, calcTotalen } from '@/store/offerteStore';
@@ -69,10 +68,6 @@ export default function DashboardPage() {
           >
             ← Terug
           </Link>
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{ elements: { avatarBox: 'w-8 h-8' } }}
-          />
         </div>
       </header>
 
