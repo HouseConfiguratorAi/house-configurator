@@ -757,7 +757,7 @@ export default function HomePage() {
           Renovision
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 12, color: T.inkMuted, fontFamily: font, background: T.accentSoft, color: T.accentDeep, padding: '4px 12px', borderRadius: 100, fontWeight: 600 }}>
+          <span style={{ fontSize: 12, color: T.accentDeep, fontFamily: font, background: T.accentSoft, padding: '4px 12px', borderRadius: 100, fontWeight: 600 }}>
             Demo
           </span>
         </div>
