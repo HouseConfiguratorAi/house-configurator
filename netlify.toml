@@ -5,6 +5,13 @@
 [build.environment]
   NODE_VERSION = "20"
   MOCK_GENERATION = "true"
+  # Clerk env vars must be set in Netlify dashboard (not here — they contain secrets):
+  # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_..."
+  # CLERK_SECRET_KEY = "sk_live_..."
+  # NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
+  # NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
+  # NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL = "/dashboard"
+  # NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL = "/dashboard"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

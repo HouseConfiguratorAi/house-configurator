@@ -1,5 +1,6 @@
 import UploadZone from '@/components/UploadZone';
 import SampleHouses from '@/components/SampleHouses';
+import AuthButton from '@/components/AuthButton';
 
 const FEATURES = [
   { icon: '🔍', title: 'AI-analyse',     desc: 'Woning automatisch gescand' },
@@ -42,6 +43,7 @@ export default function HomePage() {
           <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
           <span className="text-gray-600 text-xs font-mono">model active</span>
           <span className="text-gray-600 text-xs border border-white/8 px-3 py-1 rounded-full ml-2">Beta</span>
+          <AuthButton />
         </div>
       </nav>
 
