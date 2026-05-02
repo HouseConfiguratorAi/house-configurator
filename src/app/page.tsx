@@ -546,6 +546,17 @@ function Step2Scope({
 /* ================================================================
    STEP 3 — CONFIGURATION
    ================================================================ */
+function QuickOptionBlock({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ paddingTop: 16, marginTop: 16, borderTop: `1px solid ${T.line}` }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: T.inkMuted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10, fontFamily: font }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function Step3Config({
   photoUrl, scopes, config, onDakChange, onGevelChange, onBack, onGenerate,
 }: {
@@ -563,6 +574,14 @@ function Step3Config({
   const toggleArr = (arr: string[], item: string) =>
     arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item];
 
+  // Count selected options for the badge
+  const selectedCount = [
+    config.dak.type, config.dak.bedekking, config.dak.kleur,
+    config.dak.zonnepanelen, config.dak.dakkapel, config.dak.dakgoot,
+    config.gevel.afwerking, config.gevel.kleur, config.gevel.ramen,
+    config.gevel.deur, config.gevel.deurkleur,
+  ].filter(Boolean).length + config.dak.extras.length + config.gevel.extras.length + config.gevel.gevels.length;
+
   return (
     <div>
       <StepHeader
@@ -571,25 +590,86 @@ function Step3Config({
         subtitle="Stel de gewenste materialen, kleuren en details in. Je kan later altijd aanpassen."
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.1fr)', gap: 32, alignItems: 'start' }}>
-        {/* Sticky photo preview */}
-        <div style={{ position: 'sticky', top: 20, background: T.surface, borderRadius: 20, padding: 16, boxShadow: '0 4px 12px rgba(20,20,20,0.06)', border: `1px solid ${T.line}` }}>
-          <img src={photoUrl} alt="Origineel" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 8, display: 'block' }} />
-          <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${T.line}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: T.accentDeep, background: T.accentSoft, padding: '5px 12px', borderRadius: 100, fontWeight: 600, fontFamily: font }}>Origineel</span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {scopes.dak && <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, padding: '4px 10px', borderRadius: 100, background: T.accentSoft, color: T.accentDeep, fontFamily: font }}>Dak</span>}
-              {scopes.gevel && <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, padding: '4px 10px', borderRadius: 100, background: T.accentSoft, color: T.accentDeep, fontFamily: font }}>Gevel</span>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,380px) minmax(0,1fr)', gap: 28, alignItems: 'start' }}>
+
+        {/* LEFT — sticky photo + visual quick options */}
+        <div style={{ position: 'sticky', top: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Photo card */}
+          <div style={{ background: T.surface, borderRadius: 20, padding: 16, boxShadow: '0 4px 12px rgba(20,20,20,0.06)', border: `1px solid ${T.line}` }}>
+            <img src={photoUrl} alt="Origineel" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 10, display: 'block' }} />
+            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: T.accentDeep, background: T.accentSoft, padding: '4px 10px', borderRadius: 100, fontWeight: 700, fontFamily: font }}>Origineel</span>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {scopes.dak && <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, padding: '4px 10px', borderRadius: 100, background: T.accentSoft, color: T.accentDeep, fontFamily: font }}>Dak</span>}
+                {scopes.gevel && <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, padding: '4px 10px', borderRadius: 100, background: T.accentSoft, color: T.accentDeep, fontFamily: font }}>Gevel</span>}
+              </div>
             </div>
+          </div>
+
+          {/* Visual quick options card */}
+          <div style={{ background: T.surface, borderRadius: 20, padding: 20, border: `1px solid ${T.line}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <span style={{ fontFamily: serif, fontSize: 17, fontWeight: 500, color: T.ink }}>Visuele opties</span>
+              {selectedCount > 0 && (
+                <span style={{ fontSize: 11, fontWeight: 700, background: T.accent, color: 'white', borderRadius: 100, padding: '2px 9px', fontFamily: font }}>{selectedCount} gekozen</span>
+              )}
+            </div>
+            <p style={{ fontSize: 13, color: T.inkMuted, fontFamily: font, marginBottom: 4 }}>Meest zichtbare aanpassingen</p>
+
+            {scopes.dak && (
+              <>
+                <QuickOptionBlock title="☀️ Zonnepanelen — aantal">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {DAK_ZONNEPANELEN.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
+                    ))}
+                  </div>
+                </QuickOptionBlock>
+                <QuickOptionBlock title="🏠 Dakkapel">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {DAK_KAPEL.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
+                    ))}
+                  </div>
+                </QuickOptionBlock>
+              </>
+            )}
+
+            {scopes.gevel && (
+              <>
+                <QuickOptionBlock title="🪟 Ramen stijl">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {GEVEL_RAMEN.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
+                    ))}
+                  </div>
+                </QuickOptionBlock>
+                <QuickOptionBlock title="🚪 Voordeur stijl">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {GEVEL_DEUR.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
+                    ))}
+                  </div>
+                </QuickOptionBlock>
+                <QuickOptionBlock title="🎨 Kleur voordeur">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {GEVEL_DEURKLEUREN.map(c => (
+                      <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
+                    ))}
+                  </div>
+                </QuickOptionBlock>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Config panels */}
+        {/* RIGHT — detailed config panels */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {scopes.dak && (
             <ConfigSection
               icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M3 12L12 4l9 8v8H3v-8z" /></svg>}
-              title="Dak"
+              title="Dak — materiaal & kleur"
             >
               <ConfigGroup label="Type dak">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -606,23 +686,9 @@ function Step3Config({
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Kleur dak">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
                   {DAK_KLEUREN.map(c => (
                     <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.dak.kleur === c.name} onClick={() => onDakChange('kleur', c.name)} />
-                  ))}
-                </div>
-              </ConfigGroup>
-              <ConfigGroup label="☀️ Zonnepanelen — aantal">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_ZONNEPANELEN.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
-                  ))}
-                </div>
-              </ConfigGroup>
-              <ConfigGroup label="Dakkapel">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_KAPEL.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
                   ))}
                 </div>
               </ConfigGroup>
@@ -646,7 +712,7 @@ function Step3Config({
           {scopes.gevel && (
             <ConfigSection
               icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><rect x="4" y="4" width="16" height="16" /><path d="M9 10v4M15 10v4" /></svg>}
-              title="Gevel"
+              title="Gevel — materiaal & kleur"
             >
               <ConfigGroup label="Type gevelafwerking">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -666,30 +732,9 @@ function Step3Config({
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Kleur gevel">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
                   {GEVEL_KLEUREN.map(c => (
                     <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.kleur === c.name} onClick={() => onGevelChange('kleur', c.name)} />
-                  ))}
-                </div>
-              </ConfigGroup>
-              <ConfigGroup label="🪟 Ramen">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_RAMEN.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
-                  ))}
-                </div>
-              </ConfigGroup>
-              <ConfigGroup label="🚪 Voordeur stijl">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_DEUR.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
-                  ))}
-                </div>
-              </ConfigGroup>
-              <ConfigGroup label="Kleur voordeur">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 10 }}>
-                  {GEVEL_DEURKLEUREN.map(c => (
-                    <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
                   ))}
                 </div>
               </ConfigGroup>
@@ -709,9 +754,14 @@ function Step3Config({
         <button onClick={onBack} style={{ padding: '14px 28px', borderRadius: 100, fontSize: 15, fontWeight: 600, background: 'transparent', color: T.inkSoft, border: 'none', cursor: 'pointer', fontFamily: font }}>
           ← Terug
         </button>
-        <button onClick={onGenerate} style={{ padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, background: T.accent, color: 'white', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: font, transition: 'all 0.2s ease' }}>
-          Configureren →
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {selectedCount > 0 && (
+            <span style={{ fontSize: 13, color: T.inkSoft, fontFamily: font }}>{selectedCount} optie{selectedCount !== 1 ? 's' : ''} geselecteerd</span>
+          )}
+          <button onClick={onGenerate} style={{ padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, background: T.accent, color: 'white', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: font, transition: 'all 0.2s ease' }}>
+            ✨ Genereer visualisatie
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -746,6 +796,20 @@ function StepLoading({ photoUrl, progress }: { photoUrl: string; progress: numbe
 /* ================================================================
    RESULT STEP
    ================================================================ */
+function SummaryChip({ label, value, color }: { label: string; value: string; color?: string }) {
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      background: T.surface, border: `1px solid ${T.line}`,
+      borderRadius: 100, padding: '6px 12px',
+    }}>
+      <span style={{ fontSize: 11, color: T.inkMuted, fontFamily: font, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+      {color && <span style={{ width: 10, height: 10, borderRadius: '50%', background: color, border: '1px solid rgba(0,0,0,0.12)', flexShrink: 0 }} />}
+      <span style={{ fontSize: 13, color: T.ink, fontFamily: font, fontWeight: 500 }}>{value}</span>
+    </div>
+  );
+}
+
 function StepResult({ photoUrl, resultUrl, scopes, config, onRestart, onAdjust }: {
   photoUrl: string;
   resultUrl: string;
@@ -754,95 +818,100 @@ function StepResult({ photoUrl, resultUrl, scopes, config, onRestart, onAdjust }
   onRestart: () => void;
   onAdjust: () => void;
 }) {
-  const row = (label: string, value: string | null) => value ? (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: 14, gap: 12 }}>
-      <span style={{ color: T.inkMuted, fontFamily: font }}>{label}</span>
-      <span style={{ color: T.ink, fontWeight: 500, textAlign: 'right', fontFamily: font }}>{value}</span>
-    </div>
-  ) : null;
+  // Gather all chips for the summary
+  const allChips: { label: string; value: string; color?: string }[] = [];
 
-  const rowList = (label: string, arr: string[]) => arr.length > 0 ? (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: 14, gap: 12 }}>
-      <span style={{ color: T.inkMuted, fontFamily: font }}>{label}</span>
-      <span style={{ color: T.ink, fontWeight: 500, textAlign: 'right', fontFamily: font }}>{arr.join(', ')}</span>
-    </div>
-  ) : null;
-
-  const sectionTitle = (t: string) => (
-    <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: T.accentDeep, fontWeight: 700, marginBottom: 12, fontFamily: font }}>{t}</div>
-  );
+  if (scopes.dak) {
+    if (config.dak.type) allChips.push({ label: 'Daktype', value: config.dak.type });
+    if (config.dak.bedekking) allChips.push({ label: 'Bedekking', value: config.dak.bedekking });
+    if (config.dak.kleur) {
+      const hexMatch = DAK_KLEUREN.find(c => c.name === config.dak.kleur);
+      allChips.push({ label: 'Dakkleur', value: config.dak.kleur, color: hexMatch?.hex });
+    }
+    if (config.dak.zonnepanelen && config.dak.zonnepanelen !== 'Geen') allChips.push({ label: 'Zonnepanelen', value: config.dak.zonnepanelen });
+    if (config.dak.dakkapel && config.dak.dakkapel !== 'Geen dakkapel') allChips.push({ label: 'Dakkapel', value: config.dak.dakkapel });
+    if (config.dak.dakgoot) allChips.push({ label: 'Dakgoot', value: config.dak.dakgoot });
+    config.dak.extras.forEach(e => allChips.push({ label: 'Extra', value: e }));
+  }
+  if (scopes.gevel) {
+    if (config.gevel.afwerking) allChips.push({ label: 'Gevel', value: config.gevel.afwerking });
+    if (config.gevel.gevels.length > 0) allChips.push({ label: 'Gevels', value: config.gevel.gevels.join(', ') });
+    if (config.gevel.kleur) {
+      const hexMatch = GEVEL_KLEUREN.find(c => c.name === config.gevel.kleur);
+      allChips.push({ label: 'Gevelkleur', value: config.gevel.kleur, color: hexMatch?.hex });
+    }
+    if (config.gevel.ramen && config.gevel.ramen !== 'Huidig behouden') allChips.push({ label: 'Ramen', value: config.gevel.ramen });
+    if (config.gevel.deur && config.gevel.deur !== 'Huidig behouden') allChips.push({ label: 'Voordeur', value: config.gevel.deur });
+    if (config.gevel.deurkleur) {
+      const hexMatch = GEVEL_DEURKLEUREN.find(c => c.name === config.gevel.deurkleur);
+      allChips.push({ label: 'Deurkleur', value: config.gevel.deurkleur, color: hexMatch?.hex });
+    }
+    config.gevel.extras.forEach(e => allChips.push({ label: 'Extra', value: e }));
+  }
 
   return (
     <div>
-      <StepHeader eyebrow="✓ Klaar" title="Je foto is klaar" subtitle="Bekijk je gevisualiseerde resultaat en de gekozen configuratie hieronder." green />
+      <StepHeader eyebrow="✓ Klaar" title="Je visualisatie is klaar" subtitle="Vergelijk het resultaat met de originele foto en bekijk de gekozen configuratie." green />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 360px', gap: 32, alignItems: 'start' }}>
-        {/* Photos */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ background: T.surface, borderRadius: 20, padding: 16, boxShadow: '0 4px 12px rgba(20,20,20,0.06)', border: `1px solid ${T.line}` }}>
-            <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, fontWeight: 600, marginBottom: 8, fontFamily: font }}>Na</div>
-            <img src={resultUrl} alt="Resultaat" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 8, display: 'block' }} />
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1a4a2e', color: 'white', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, padding: '6px 12px', borderRadius: 100, marginTop: 14, fontFamily: font }}>
-              <span style={{ width: 6, height: 6, background: '#34d399', borderRadius: '50%' }} />
-              Visualisatie voltooid
+      {/* Photos side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: 16, alignItems: 'start', marginBottom: 20 }}>
+        {/* Result — large */}
+        <div style={{ background: T.surface, borderRadius: 20, padding: 16, boxShadow: '0 4px 16px rgba(20,20,20,0.08)', border: `1px solid ${T.line}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, fontWeight: 600, fontFamily: font }}>Na renovatie</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#1a4a2e', color: '#d1f5e0', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, padding: '4px 10px', borderRadius: 100, fontFamily: font }}>
+              <span style={{ width: 5, height: 5, background: '#34d399', borderRadius: '50%' }} />
+              Visualisatie
             </div>
           </div>
-          <div style={{ background: T.surface, borderRadius: 20, padding: 16, border: `1px solid ${T.line}` }}>
-            <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, fontWeight: 600, marginBottom: 8, fontFamily: font }}>Origineel</div>
-            <img src={photoUrl} alt="Origineel" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 8, display: 'block' }} />
-          </div>
+          <img src={resultUrl} alt="Resultaat" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 10, display: 'block' }} />
         </div>
 
-        {/* Summary */}
-        <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 24 }}>
-          <h3 style={{ fontFamily: serif, fontSize: 20, fontWeight: 500, marginBottom: 4, color: T.ink }}>Configuratie</h3>
-          <p style={{ fontSize: 13, color: T.inkMuted, marginBottom: 20, fontFamily: font }}>Overzicht van de gekozen opties</p>
+        {/* Original — smaller */}
+        <div style={{ background: T.surface, borderRadius: 20, padding: 16, border: `1px solid ${T.line}` }}>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, fontWeight: 600, marginBottom: 10, fontFamily: font }}>Origineel</div>
+          <img src={photoUrl} alt="Origineel" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 10, display: 'block' }} />
+        </div>
+      </div>
 
-          {/* Onderdelen */}
-          <div style={{ paddingTop: 0 }}>
-            {sectionTitle('Onderdelen')}
-            {row('Geselecteerd', [scopes.dak && 'Dak', scopes.gevel && 'Gevel'].filter(Boolean).join(', '))}
+      {/* Summary chips below photos */}
+      {allChips.length > 0 && (
+        <div style={{ background: T.surface, borderRadius: 20, padding: 20, border: `1px solid ${T.line}`, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span style={{ fontFamily: serif, fontSize: 16, fontWeight: 500, color: T.ink }}>Configuratiesamenvatting</span>
+            <span style={{ fontSize: 11, fontWeight: 700, background: T.accentSoft, color: T.accentDeep, borderRadius: 100, padding: '2px 9px', fontFamily: font }}>{allChips.length} opties</span>
           </div>
-
-          {scopes.dak && (
-            <div style={{ paddingTop: 16, marginTop: 16, borderTop: `1px solid ${T.line}` }}>
-              {sectionTitle('Dak')}
-              {row('Type', config.dak.type)}
-              {row('Bedekking', config.dak.bedekking)}
-              {row('Kleur', config.dak.kleur)}
-              {row('Zonnepanelen', config.dak.zonnepanelen)}
-              {row('Dakkapel', config.dak.dakkapel)}
-              {row('Dakgoot', config.dak.dakgoot)}
-              {rowList('Extra', config.dak.extras)}
-            </div>
-          )}
-
-          {scopes.gevel && (
-            <div style={{ paddingTop: 16, marginTop: 16, borderTop: `1px solid ${T.line}` }}>
-              {sectionTitle('Gevel')}
-              {row('Afwerking', config.gevel.afwerking)}
-              {rowList('Gevels', config.gevel.gevels)}
-              {row('Kleur', config.gevel.kleur)}
-              {row('Ramen', config.gevel.ramen)}
-              {row('Voordeur', config.gevel.deur)}
-              {row('Deurkleur', config.gevel.deurkleur)}
-              {rowList('Extra', config.gevel.extras)}
-            </div>
-          )}
-
-          {/* Actions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24, paddingTop: 20, borderTop: `1px solid ${T.line}` }}>
-            <button onClick={onRestart} style={{ padding: 14, borderRadius: 100, fontSize: 15, fontWeight: 600, background: T.ink, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: font }}>
-              Nieuwe foto uploaden
-            </button>
-            <button onClick={onAdjust} style={{ padding: 14, borderRadius: 100, fontSize: 15, fontWeight: 600, background: T.surface, color: T.ink, border: `1px solid ${T.lineStrong}`, cursor: 'pointer', fontFamily: font }}>
-              Configuratie aanpassen
-            </button>
-            <Link href="/offerte" style={{ padding: 14, borderRadius: 100, fontSize: 15, fontWeight: 600, background: T.accentSoft, color: T.accentDeep, textAlign: 'center', textDecoration: 'none', display: 'block', fontFamily: font }}>
-              📄 Offerte aanmaken
-            </Link>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {allChips.map((chip, i) => (
+              <SummaryChip key={i} label={chip.label} value={chip.value} color={chip.color} />
+            ))}
           </div>
         </div>
+      )}
+
+      {/* Action buttons row */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <button onClick={onRestart} style={{
+          padding: '14px 28px', borderRadius: 100, fontSize: 15, fontWeight: 600,
+          background: T.ink, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: font,
+          transition: 'all 0.2s ease',
+        }}>
+          Nieuwe foto uploaden
+        </button>
+        <button onClick={onAdjust} style={{
+          padding: '14px 28px', borderRadius: 100, fontSize: 15, fontWeight: 600,
+          background: T.surface, color: T.ink, border: `1px solid ${T.lineStrong}`,
+          cursor: 'pointer', fontFamily: font, transition: 'all 0.2s ease',
+        }}>
+          ✏️ Aanpassen
+        </button>
+        <Link href="/offerte" style={{
+          padding: '14px 28px', borderRadius: 100, fontSize: 15, fontWeight: 600,
+          background: T.accentSoft, color: T.accentDeep, textAlign: 'center',
+          textDecoration: 'none', display: 'inline-block', fontFamily: font,
+        }}>
+          📄 Offerte aanmaken
+        </Link>
       </div>
     </div>
   );
