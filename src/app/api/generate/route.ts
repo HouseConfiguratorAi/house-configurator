@@ -6,14 +6,18 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const body: GenerateRequest = await req.json();
-    const { imageBase64, config, lighting = 'day', season = 'summer' } = body;
+    const body = await req.json();
+    const { imageBase64, config, prompt: directPrompt, lighting = 'day', season = 'summer' } = body;
 
-    if (!imageBase64 || !config) {
-      return NextResponse.json({ error: 'Missing imageBase64 or config' }, { status: 400 });
+    if (!imageBase64) {
+      return NextResponse.json({ error: 'Missing imageBase64' }, { status: 400 });
     }
 
-    const prompt = buildPrompt(config, lighting, season);
+    // Use a direct prompt if provided, otherwise build from HouseConfig
+    const prompt = directPrompt ?? (config ? buildPrompt(config as GenerateRequest['config'], lighting, season) : null);
+    if (!prompt) {
+      return NextResponse.json({ error: 'Missing config or prompt' }, { status: 400 });
+    }
     const negativePrompt = buildNegativePrompt();
 
     // Mock mode or no API token

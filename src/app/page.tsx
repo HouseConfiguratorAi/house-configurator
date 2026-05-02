@@ -96,6 +96,140 @@ const defaultConfig = (): Config => ({
 });
 
 /* ================================================================
+   PROMPT BUILDER — Dutch → English AI descriptions
+   ================================================================ */
+const COLOR_EN: Record<string, string> = {
+  'Antraciet': 'anthracite dark gray',
+  'Zwart': 'matte black',
+  'Roodbruin': 'reddish brown',
+  'Donkergrijs': 'dark charcoal gray',
+  'Grijs': 'medium gray',
+  'Terracotta': 'terracotta red-orange',
+  'Leisteengrijs': 'slate gray',
+  'Bruin': 'warm chestnut brown',
+  'Groengrijs': 'gray-green',
+  'Rood': 'brick red',
+  'Naturel': 'natural sandy beige',
+  'Wit': 'pure white',
+  'Crème': 'cream off-white',
+  'Lichtgrijs': 'light silver gray',
+  'Beige': 'warm beige',
+  'Zandkleur': 'sandy beige',
+  'Taupe': 'warm taupe',
+  'Olijfgroen': 'olive green',
+  'Okergeel': 'ochre yellow',
+  'Bordeaux': 'deep bordeaux red',
+  'Donkerblauw': 'deep navy blue',
+  'Groen': 'dark forest green',
+  'Houtkleur': 'natural wood brown',
+  'Geel': 'golden yellow',
+};
+
+const MATERIAL_EN: Record<string, string> = {
+  // Dak
+  'Dakpannen': 'clay roof tiles',
+  'Leien': 'natural slate tiles',
+  'EPDM': 'flat EPDM rubber roof',
+  'Roofing/bitumen': 'bitumen flat roofing',
+  'Metalen dakpanelen': 'standing seam metal roof panels',
+  'Groendak': 'green living sedum roof',
+  'Zink': 'zinc roofing',
+  'Keramische pannen': 'ceramic roof tiles',
+  'Betonpannen': 'concrete roof tiles',
+  // Gevel
+  'Crepi': 'textured render (crepi) exterior finish',
+  'Gevelpleister': 'smooth exterior plaster',
+  'Houten gevelbekleding': 'horizontal wood cladding',
+  'Steenstrips': 'thin brick slips veneer',
+  'Gevelpanelen': 'flat facade composite panels',
+  'Schilderwerk': 'painted exterior walls',
+  'Baksteen': 'exposed facing brick',
+  'Natuursteen': 'natural stone cladding',
+  'Composiet': 'composite cladding boards',
+  'Betonlook': 'concrete-look exterior panels',
+};
+
+const RAMEN_EN: Record<string, string> = {
+  'Houten ramen': 'wooden window frames',
+  'PVC ramen wit': 'white PVC window frames',
+  'PVC ramen zwart': 'black PVC window frames',
+  'Aluminium ramen': 'slim aluminum window frames',
+  'Stalen ramen': 'steel-look window frames',
+  'Panoramaramen': 'large panoramic windows',
+};
+
+const DEUR_EN: Record<string, string> = {
+  'Voordeur klassiek': 'classic panel front door',
+  'Voordeur modern': 'modern flat-panel front door',
+  'Voordeur staal': 'industrial steel front door',
+  'Voordeur hout': 'solid wood front door',
+  'Draaideuren': 'pivot front door',
+  'Schuifdeuren': 'sliding glass entry doors',
+};
+
+const DAK_TYPE_EN: Record<string, string> = {
+  'Zadeldak': 'gable roof',
+  'Plat dak': 'flat roof',
+  'Schilddak': 'hip roof',
+  'Mansardedak': 'mansard roof',
+  'Tentdak': 'pyramid hip roof',
+  'Lessenaarsdak': 'mono-pitch lean-to roof',
+  'Vlinderdak': 'butterfly roof',
+};
+
+function c(name: string | null) { return name ? (COLOR_EN[name] ?? name) : null; }
+function m(name: string | null) { return name ? (MATERIAL_EN[name] ?? name) : null; }
+
+function buildRichPrompt(config: Config, scopes: Scopes): string {
+  const lines: string[] = [
+    'Photorealistic exterior house renovation photograph.',
+    'Keep the identical house structure, same camera angle, same perspective, same garden and street.',
+    'Apply only these specific renovation changes:',
+  ];
+
+  if (scopes.dak) {
+    const d = config.dak;
+    const dakParts: string[] = [];
+    if (d.type) dakParts.push(DAK_TYPE_EN[d.type] ?? d.type);
+    if (d.bedekking) dakParts.push(`covered with ${m(d.bedekking)}`);
+    if (d.kleur) dakParts.push(`in ${c(d.kleur)} color`);
+    if (d.zonnepanelen && d.zonnepanelen !== 'Geen') dakParts.push(`with ${d.zonnepanelen} solar panels mounted flush on the roof surface`);
+    if (d.dakkapel && d.dakkapel !== 'Geen dakkapel') dakParts.push(`with a ${d.dakkapel.toLowerCase()} integrated into the roof`);
+    if (d.dakgoot) dakParts.push(`${d.dakgoot.toLowerCase()} gutters`);
+    if (dakParts.length > 0) lines.push(`Roof: ${dakParts.join(', ')}.`);
+    if (d.extras.length > 0) {
+      const extrasEn = d.extras.map(e => e === 'Isolatie toevoegen' ? 'roof insulation added' : e === 'Dakraam toevoegen' ? 'skylight window in roof' : e).join(', ');
+      lines.push(`Roof extras: ${extrasEn}.`);
+    }
+  }
+
+  if (scopes.gevel) {
+    const g = config.gevel;
+    const gevelParts: string[] = [];
+    if (g.afwerking) gevelParts.push(m(g.afwerking) ?? g.afwerking);
+    if (g.kleur) gevelParts.push(`painted ${c(g.kleur)}`);
+    if (g.gevels.length > 0 && !g.gevels.includes('Alle gevels')) gevelParts.push(`applied to ${g.gevels.join(', ').toLowerCase()}`);
+    if (gevelParts.length > 0) lines.push(`Facade: ${gevelParts.join(', ')}.`);
+    if (g.ramen && g.ramen !== 'Huidig behouden') lines.push(`Windows: replaced with ${RAMEN_EN[g.ramen] ?? g.ramen}.`);
+    if (g.deur && g.deur !== 'Huidig behouden') {
+      const deurDesc = DEUR_EN[g.deur] ?? g.deur;
+      const kleurDesc = g.deurkleur ? ` in ${c(g.deurkleur)} color` : '';
+      lines.push(`Front door: ${deurDesc}${kleurDesc}.`);
+    } else if (g.deurkleur) {
+      lines.push(`Front door repainted ${c(g.deurkleur)}.`);
+    }
+    if (g.extras.length > 0) lines.push(`Facade extras: ${g.extras.join(', ')}.`);
+  }
+
+  lines.push(
+    'Negative: do NOT change house shape, structure, windows layout, or add elements not specified.',
+    'Professional architectural photography, 8K resolution, ultra detailed, sharp focus, natural daylight.',
+  );
+
+  return lines.join(' ');
+}
+
+/* ================================================================
    DESIGN TOKENS
    ================================================================ */
 const T = {
@@ -806,20 +940,12 @@ export default function HomePage() {
     }, 200);
 
     try {
-      // Map to HouseConfig for the existing API route
-      const houseConfig = {
-        roof: config.dak.kleur ?? 'Antraciet',
-        facade: config.gevel.kleur ?? 'Wit',
-        windows: 'Wit',
-        door: 'Antraciet',
-        facadeMaterial: config.gevel.afwerking ?? 'Schilderwerk',
-        roofMaterial: config.dak.bedekking ?? 'Dakpannen',
-      };
+      const prompt = buildRichPrompt(config, scopes);
 
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: photoUrl, config: houseConfig, lighting: 'day', season: 'summer' }),
+        body: JSON.stringify({ imageBase64: photoUrl, prompt }),
       });
 
       const data = await res.json();
@@ -834,7 +960,7 @@ export default function HomePage() {
       setError('Generatie mislukt. Probeer opnieuw.');
       setStep(3);
     }
-  }, [photoUrl, config]);
+  }, [photoUrl, config, scopes]);
 
   /* ---- Reset ---- */
   const reset = useCallback(() => {
