@@ -213,6 +213,12 @@ export default function ResultPage() {
               </svg>
               Download afbeelding
             </button>
+            <button
+              onClick={() => router.push('/offerte')}
+              className="w-full py-3 rounded-xl font-semibold text-sm text-white bg-surface-elevated hover:bg-surface-high border border-accent/20 hover:border-accent/40 transition-all duration-200 flex items-center justify-center gap-2"
+            >
+              📋 Offerte aanmaken voor klant
+            </button>
             <button onClick={handleExportPDF} className="w-full py-3 rounded-xl font-medium text-sm text-white bg-surface-elevated hover:bg-surface-high border border-surface-border transition-all duration-200 flex items-center justify-center gap-2">
               📄 Exporteer als PDF
             </button>
