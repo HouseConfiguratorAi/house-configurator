@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHouseStore } from '@/store/houseStore';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import AICornerBrackets from '@/components/AICornerBrackets';
 import ShareButton from '@/components/ShareButton';
 import SavedVersions from '@/components/SavedVersions';
 import { ELEMENTS } from '@/lib/colorOptions';
@@ -85,8 +86,14 @@ export default function ResultPage() {
 
         {/* Slider */}
         <div className="flex-1 flex flex-col justify-center min-w-0">
-          <div className="animate-scale-in">
+          <div className="animate-scale-in relative">
             <BeforeAfterSlider before={originalImage} after={generatedImage} />
+            <AICornerBrackets size={20} color="rgba(200,169,110,0.4)" className="m-3" />
+            {/* AI badge */}
+            <div className="absolute top-3 right-3 flex items-center gap-1.5 glass-dark px-2.5 py-1.5 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-green-400 text-[10px] font-mono">AI gegenereerd</span>
+            </div>
           </div>
           <p className="text-center text-gray-700 text-xs mt-2.5">Sleep de slider om voor en na te vergelijken</p>
 

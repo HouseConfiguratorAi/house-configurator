@@ -9,6 +9,8 @@ import PopularCombos from '@/components/PopularCombos';
 import MaterialPicker from '@/components/MaterialPicker';
 import LightingSeasonBar from '@/components/LightingSeasonBar';
 import FavoritesPanel from '@/components/FavoritesPanel';
+import AICornerBrackets from '@/components/AICornerBrackets';
+import AIGeneratingSteps from '@/components/AIGeneratingSteps';
 import clsx from 'clsx';
 
 type Panel = 'stijlen' | 'materialen' | 'sfeer' | 'favorieten' | null;
@@ -164,35 +166,21 @@ export default function ConfigurePage() {
             className="w-full rounded-3xl shadow-2xl object-cover max-h-[58vh]"
           />
 
+          {/* AI corner brackets */}
+          <AICornerBrackets size={20} className="m-3" />
+
           {/* Badges */}
-          <div className="absolute top-3 left-3"><ConfigSummaryBadges /></div>
+          <div className="absolute top-4 left-4"><ConfigSummaryBadges /></div>
 
           {/* Hint */}
           {!isGenerating && !activePanel && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass-dark px-3 py-1.5 rounded-full">
-              <p className="text-gray-400 text-xs whitespace-nowrap">Kies elementen hieronder ↓</p>
+              <p className="text-gray-400 text-xs whitespace-nowrap font-mono">↓ kies elementen</p>
             </div>
           )}
 
-          {/* Generating overlay */}
-          {isGenerating && (
-            <div className="absolute inset-0 rounded-3xl bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center gap-4 animate-fade-in">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 rounded-full border-2 border-accent/20 animate-ping" style={{ animationDuration: '1.5s' }} />
-                <div className="absolute inset-0 rounded-full border-2 border-accent/10 animate-ping" style={{ animationDuration: '2.2s', animationDelay: '0.4s' }} />
-                <div className="absolute inset-2 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-              </div>
-              <div className="text-center">
-                <p className="text-white font-semibold text-lg">AI genereert je renovatie</p>
-                <p className="text-gray-400 text-sm mt-1">Even geduld — ±30 seconden</p>
-              </div>
-              <div className="flex gap-1 mt-1">
-                {[0,1,2,3,4].map((i) => (
-                  <div key={i} className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: `${i*0.1}s` }} />
-                ))}
-              </div>
-            </div>
-          )}
+          {/* AI Generating overlay */}
+          {isGenerating && <AIGeneratingSteps />}
         </div>
       </div>
 
