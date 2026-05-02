@@ -7,22 +7,18 @@ export const maxDuration = 60;
 export async function POST(req: NextRequest) {
   try {
     const body: GenerateRequest = await req.json();
-    const { imageBase64, config } = body;
+    const { imageBase64, config, lighting = 'day', season = 'summer' } = body;
 
     if (!imageBase64 || !config) {
       return NextResponse.json({ error: 'Missing imageBase64 or config' }, { status: 400 });
     }
 
-    const prompt = buildPrompt(config);
+    const prompt = buildPrompt(config, lighting, season);
     const negativePrompt = buildNegativePrompt();
 
-    // Mock mode or no API token → return original with metadata
+    // Mock mode or no API token
     if (process.env.MOCK_GENERATION === 'true' || !process.env.REPLICATE_API_TOKEN) {
-      return NextResponse.json({
-        imageUrl: imageBase64,
-        prompt,
-        mock: true,
-      });
+      return NextResponse.json({ imageUrl: imageBase64, prompt, mock: true });
     }
 
     const Replicate = (await import('replicate')).default;
@@ -35,6 +31,7 @@ export async function POST(req: NextRequest) {
       {
         input: {
           prompt,
+          negative_prompt: negativePrompt,
           image: `data:image/jpeg;base64,${base64Data}`,
           num_inference_steps: 50,
           image_guidance_scale: 1.5,
@@ -43,9 +40,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // output is an array of URLs from Replicate
     const outputUrl = Array.isArray(output) ? output[0] : output;
-
     return NextResponse.json({ imageUrl: outputUrl, prompt, mock: false });
   } catch (err) {
     console.error('[/api/generate]', err);
