@@ -280,6 +280,21 @@ function ColorSwatch({ name, hex, selected, onClick }: { name: string; hex: stri
   );
 }
 
+function IconTile({ emoji, label, selected, onClick }: { emoji: string; label: string; selected: boolean; onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      gap: 6, padding: '14px 8px', borderRadius: 14, cursor: 'pointer',
+      border: `2px solid ${selected ? T.accent : T.line}`,
+      background: selected ? T.accentSoft : T.surface,
+      transition: 'all 0.15s ease', minWidth: 0,
+    }}>
+      <span style={{ fontSize: 28, lineHeight: 1 }}>{emoji}</span>
+      <span style={{ fontSize: 11, fontWeight: 600, color: selected ? T.accentDeep : T.inkSoft, fontFamily: font, textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
+    </button>
+  );
+}
+
 function CheckTile({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
@@ -506,18 +521,33 @@ function Step2Scope({
               </div>
             </button>
             {scopes.dak && (
-              <div style={{ padding: '0 24px 24px', borderTop: `1px solid ${T.line}`, paddingTop: 20 }}>
-                {optGroup('☀️ Zonnepanelen — aantal',
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {DAK_ZONNEPANELEN.map(opt => (
-                      <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
+              <div style={{ padding: '20px 24px 24px', borderTop: `1px solid ${T.line}` }}>
+                {optGroup('Zonnepanelen',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {[
+                      { opt: 'Geen',        emoji: '🚫' },
+                      { opt: '4 panelen',   emoji: '☀️', short: '4' },
+                      { opt: '6 panelen',   emoji: '☀️', short: '6' },
+                      { opt: '8 panelen',   emoji: '☀️', short: '8' },
+                      { opt: '10 panelen',  emoji: '☀️', short: '10' },
+                      { opt: '12 panelen',  emoji: '☀️', short: '12' },
+                      { opt: '16 panelen',  emoji: '☀️', short: '16' },
+                      { opt: '20+ panelen', emoji: '☀️', short: '20+' },
+                    ].map(({ opt, emoji, short }) => (
+                      <IconTile key={opt} emoji={emoji} label={short ?? opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
                     ))}
                   </div>
                 )}
-                {optGroup('🏠 Dakkapel',
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {DAK_KAPEL.map(opt => (
-                      <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
+                {optGroup('Dakkapel',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {[
+                      { opt: 'Geen dakkapel',          emoji: '🚫', short: 'Geen' },
+                      { opt: 'Kleine dakkapel',         emoji: '🪟', short: 'Klein' },
+                      { opt: 'Grote dakkapel',          emoji: '🪟', short: 'Groot' },
+                      { opt: 'Dakkapel met terras',     emoji: '🌿', short: 'Terras' },
+                      { opt: 'Meerdere dakkapellen',    emoji: '🪟', short: 'Meerdere' },
+                    ].map(({ opt, emoji, short }) => (
+                      <IconTile key={opt} emoji={emoji} label={short} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
                     ))}
                   </div>
                 )}
@@ -553,22 +583,38 @@ function Step2Scope({
               </div>
             </button>
             {scopes.gevel && (
-              <div style={{ padding: '0 24px 24px', borderTop: `1px solid ${T.line}`, paddingTop: 20 }}>
-                {optGroup('🪟 Ramen stijl',
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {GEVEL_RAMEN.map(opt => (
-                      <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
+              <div style={{ padding: '20px 24px 24px', borderTop: `1px solid ${T.line}` }}>
+                {optGroup('Ramen',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {[
+                      { opt: 'Huidig behouden',  emoji: '👁️', short: 'Huidig' },
+                      { opt: 'Houten ramen',     emoji: '🪵', short: 'Hout' },
+                      { opt: 'PVC ramen wit',    emoji: '⬜', short: 'PVC wit' },
+                      { opt: 'PVC ramen zwart',  emoji: '⬛', short: 'PVC zwart' },
+                      { opt: 'Aluminium ramen',  emoji: '🔳', short: 'Alu' },
+                      { opt: 'Stalen ramen',     emoji: '🔩', short: 'Staal' },
+                      { opt: 'Panoramaramen',    emoji: '🌅', short: 'Panorama' },
+                    ].map(({ opt, emoji, short }) => (
+                      <IconTile key={opt} emoji={emoji} label={short} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
                     ))}
                   </div>
                 )}
-                {optGroup('🚪 Voordeur stijl',
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {GEVEL_DEUR.map(opt => (
-                      <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
+                {optGroup('Voordeur',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {[
+                      { opt: 'Huidig behouden',   emoji: '👁️', short: 'Huidig' },
+                      { opt: 'Voordeur klassiek', emoji: '🚪', short: 'Klassiek' },
+                      { opt: 'Voordeur modern',   emoji: '🚪', short: 'Modern' },
+                      { opt: 'Voordeur staal',    emoji: '🔩', short: 'Staal' },
+                      { opt: 'Voordeur hout',     emoji: '🪵', short: 'Hout' },
+                      { opt: 'Draaideuren',       emoji: '🔄', short: 'Draai' },
+                      { opt: 'Schuifdeuren',      emoji: '↔️', short: 'Schuif' },
+                    ].map(({ opt, emoji, short }) => (
+                      <IconTile key={opt} emoji={emoji} label={short} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
                     ))}
                   </div>
                 )}
-                {optGroup('🎨 Kleur voordeur',
+                {optGroup('Kleur voordeur',
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 }}>
                     {GEVEL_DEURKLEUREN.map(c => (
                       <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
