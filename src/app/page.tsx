@@ -431,7 +431,7 @@ function Step1Upload({
 }
 
 /* ================================================================
-   STEP 2 — SCOPE + QUICK VISUAL OPTIONS
+   STEP 2 — SCOPE + QUICK VISUAL OPTIONS (always visible)
    ================================================================ */
 function Step2Scope({
   photoUrl, scopes, config, onToggle, onDakChange, onGevelChange, onBack, onNext,
@@ -447,19 +447,26 @@ function Step2Scope({
 }) {
   const anySelected = scopes.dak || scopes.gevel;
 
+  const optGroup = (label: string, children: React.ReactNode) => (
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>{label}</div>
+      {children}
+    </div>
+  );
+
   return (
     <div>
       <StepHeader
         eyebrow="Stap 2 van 3"
         title="Wat wil je aanpassen?"
-        subtitle="Kies wat je wil renoveren en stel direct de meest zichtbare opties in."
+        subtitle="Kies dak, gevel of beide — en stel direct de opties in."
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 28, alignItems: 'start' }}>
 
         {/* LEFT — sticky photo */}
         <div style={{ position: 'sticky', top: 20 }}>
-          <div style={{ background: T.surface, borderRadius: 20, padding: 16, boxShadow: '0 1px 3px rgba(20,20,20,0.06)', border: `1px solid ${T.line}` }}>
+          <div style={{ background: T.surface, borderRadius: 20, padding: 16, border: `1px solid ${T.line}` }}>
             <img src={photoUrl} alt="Jouw foto" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 8, display: 'block' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
               <span style={{ color: T.inkMuted, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, fontSize: 11, fontFamily: font }}>Jouw foto</span>
@@ -468,120 +475,83 @@ function Step2Scope({
           </div>
         </div>
 
-        {/* RIGHT — scope cards + quick options */}
+        {/* RIGHT — scope toggles + all options always visible */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-          {/* Scope toggle cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            {([
-              {
-                key: 'dak' as const, title: 'Dak', emoji: '🏠',
-                desc: 'Dakbedekking, kleur, zonnepanelen en meer.',
-              },
-              {
-                key: 'gevel' as const, title: 'Gevel', emoji: '🧱',
-                desc: 'Afwerking, gevelkleur, ramen en voordeur.',
-              },
-            ]).map(card => {
-              const sel = scopes[card.key];
-              return (
-                <button
-                  key={card.key}
-                  onClick={() => onToggle(card.key)}
-                  style={{
-                    background: sel ? T.accentSoft : T.surface,
-                    border: `2px solid ${sel ? T.accent : T.line}`,
-                    borderRadius: 16, padding: '20px 20px',
-                    cursor: 'pointer', textAlign: 'left', position: 'relative',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div style={{
-                    position: 'absolute', top: 16, right: 16, width: 24, height: 24,
+          {/* Scope toggle pills */}
+          <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 20 }}>
+            <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font, marginBottom: 12 }}>Wat wil je renoveren?</div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              {([{ key: 'dak' as const, label: '🏠 Dak' }, { key: 'gevel' as const, label: '🧱 Gevel' }]).map(({ key, label }) => {
+                const sel = scopes[key];
+                return (
+                  <button key={key} onClick={() => onToggle(key)} style={{
+                    padding: '10px 22px', borderRadius: 100, fontSize: 15, fontWeight: 600,
                     border: `2px solid ${sel ? T.accent : T.lineStrong}`,
-                    borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: sel ? T.accent : T.surface, color: 'white', fontSize: 11, fontWeight: 700,
+                    background: sel ? T.accent : T.surface,
+                    color: sel ? 'white' : T.inkSoft,
+                    cursor: 'pointer', transition: 'all 0.2s ease', fontFamily: font,
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
                   }}>
-                    {sel && '✓'}
-                  </div>
-                  <div style={{ fontSize: 28, marginBottom: 10 }}>{card.emoji}</div>
-                  <h3 style={{ fontFamily: serif, fontSize: 20, fontWeight: 500, marginBottom: 4, color: T.ink }}>{card.title}</h3>
-                  <p style={{ fontSize: 13, color: T.inkSoft, lineHeight: 1.4, fontFamily: font, marginRight: 28 }}>{card.desc}</p>
-                </button>
-              );
-            })}
+                    {sel && <span>✓</span>} {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Quick visual options — shown when a scope is selected */}
-          {anySelected && (
+          {/* DAK options */}
+          {scopes.dak && (
             <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 24 }}>
-              <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 500, color: T.ink, marginBottom: 4 }}>Snelle opties</div>
-              <p style={{ fontSize: 13, color: T.inkMuted, fontFamily: font, marginBottom: 20 }}>Stel direct de meest zichtbare aanpassingen in — meer details in de volgende stap.</p>
-
-              {scopes.dak && (
-                <>
-                  {/* Zonnepanelen */}
-                  <div style={{ marginBottom: 20 }}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>
-                      ☀️ Zonnepanelen — aantal
-                    </label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {DAK_ZONNEPANELEN.map(opt => (
-                        <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Dakkapel */}
-                  <div style={{ marginBottom: scopes.gevel ? 20 : 0, paddingBottom: scopes.gevel ? 20 : 0, borderBottom: scopes.gevel ? `1px solid ${T.line}` : 'none' }}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>
-                      🏠 Dakkapel
-                    </label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {DAK_KAPEL.map(opt => (
-                        <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
-                      ))}
-                    </div>
-                  </div>
-                </>
+              <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 500, color: T.ink, marginBottom: 18, paddingBottom: 14, borderBottom: `1px solid ${T.line}` }}>🏠 Dak opties</div>
+              {optGroup('☀️ Zonnepanelen — aantal',
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {DAK_ZONNEPANELEN.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
+                  ))}
+                </div>
               )}
-
-              {scopes.gevel && (
-                <>
-                  {/* Ramen */}
-                  <div style={{ marginBottom: 20, marginTop: scopes.dak ? 0 : 0 }}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>
-                      🪟 Ramen stijl
-                    </label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {GEVEL_RAMEN.map(opt => (
-                        <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Voordeur */}
-                  <div style={{ marginBottom: 20 }}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>
-                      🚪 Voordeur stijl
-                    </label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {GEVEL_DEUR.map(opt => (
-                        <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Deurkleur */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.inkMuted, marginBottom: 10, fontFamily: font }}>
-                      🎨 Kleur voordeur
-                    </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 }}>
-                      {GEVEL_DEURKLEUREN.map(c => (
-                        <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
-                      ))}
-                    </div>
-                  </div>
-                </>
+              {optGroup('🏠 Dakkapel',
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {DAK_KAPEL.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
+                  ))}
+                </div>
               )}
+            </div>
+          )}
+
+          {/* GEVEL options */}
+          {scopes.gevel && (
+            <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 24 }}>
+              <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 500, color: T.ink, marginBottom: 18, paddingBottom: 14, borderBottom: `1px solid ${T.line}` }}>🧱 Gevel opties</div>
+              {optGroup('🪟 Ramen stijl',
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {GEVEL_RAMEN.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
+                  ))}
+                </div>
+              )}
+              {optGroup('🚪 Voordeur stijl',
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {GEVEL_DEUR.map(opt => (
+                    <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
+                  ))}
+                </div>
+              )}
+              {optGroup('🎨 Kleur voordeur',
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 }}>
+                  {GEVEL_DEURKLEUREN.map(c => (
+                    <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!anySelected && (
+            <div style={{ background: T.surface, border: `2px dashed ${T.lineStrong}`, borderRadius: 20, padding: 32, textAlign: 'center' }}>
+              <p style={{ color: T.inkMuted, fontFamily: font, fontSize: 15 }}>Kies hierboven Dak en/of Gevel om de opties te zien.</p>
             </div>
           )}
         </div>
@@ -599,8 +569,7 @@ function Step2Scope({
             background: anySelected ? T.ink : T.lineStrong,
             color: anySelected ? T.bg : T.inkMuted,
             border: 'none', cursor: anySelected ? 'pointer' : 'not-allowed',
-            display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: font,
-            transition: 'all 0.2s ease',
+            fontFamily: font, transition: 'all 0.2s ease',
           }}
         >
           Meer details →
