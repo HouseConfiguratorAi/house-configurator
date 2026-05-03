@@ -475,85 +475,110 @@ function Step2Scope({
           </div>
         </div>
 
-        {/* RIGHT — scope toggles + all options always visible */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* RIGHT — accordion: click header → options expand inline */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-          {/* Scope toggle pills */}
-          <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 20 }}>
-            <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font, marginBottom: 12 }}>Wat wil je renoveren?</div>
-            <div style={{ display: 'flex', gap: 12 }}>
-              {([{ key: 'dak' as const, label: '🏠 Dak' }, { key: 'gevel' as const, label: '🧱 Gevel' }]).map(({ key, label }) => {
-                const sel = scopes[key];
-                return (
-                  <button key={key} onClick={() => onToggle(key)} style={{
-                    padding: '10px 22px', borderRadius: 100, fontSize: 15, fontWeight: 600,
-                    border: `2px solid ${sel ? T.accent : T.lineStrong}`,
-                    background: sel ? T.accent : T.surface,
-                    color: sel ? 'white' : T.inkSoft,
-                    cursor: 'pointer', transition: 'all 0.2s ease', fontFamily: font,
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                  }}>
-                    {sel && <span>✓</span>} {label}
-                  </button>
-                );
-              })}
-            </div>
+          {/* DAK accordion */}
+          <div style={{
+            background: T.surface, border: `2px solid ${scopes.dak ? T.accent : T.line}`,
+            borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s ease',
+          }}>
+            <button onClick={() => onToggle('dak')} style={{
+              width: '100%', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: scopes.dak ? T.accentSoft : 'transparent', border: 'none', cursor: 'pointer',
+              transition: 'background 0.2s ease',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <span style={{ fontSize: 26 }}>🏠</span>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontFamily: serif, fontSize: 19, fontWeight: 500, color: T.ink }}>Dak</div>
+                  <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font }}>Zonnepanelen, dakkapel en meer</div>
+                </div>
+              </div>
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                border: `2px solid ${scopes.dak ? T.accent : T.lineStrong}`,
+                background: scopes.dak ? T.accent : T.surface,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontSize: 13, fontWeight: 700,
+              }}>
+                {scopes.dak ? '✓' : '+'}
+              </div>
+            </button>
+            {scopes.dak && (
+              <div style={{ padding: '0 24px 24px', borderTop: `1px solid ${T.line}`, paddingTop: 20 }}>
+                {optGroup('☀️ Zonnepanelen — aantal',
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {DAK_ZONNEPANELEN.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
+                    ))}
+                  </div>
+                )}
+                {optGroup('🏠 Dakkapel',
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {DAK_KAPEL.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* DAK options */}
-          {scopes.dak && (
-            <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 24 }}>
-              <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 500, color: T.ink, marginBottom: 18, paddingBottom: 14, borderBottom: `1px solid ${T.line}` }}>🏠 Dak opties</div>
-              {optGroup('☀️ Zonnepanelen — aantal',
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_ZONNEPANELEN.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
-                  ))}
+          {/* GEVEL accordion */}
+          <div style={{
+            background: T.surface, border: `2px solid ${scopes.gevel ? T.accent : T.line}`,
+            borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s ease',
+          }}>
+            <button onClick={() => onToggle('gevel')} style={{
+              width: '100%', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: scopes.gevel ? T.accentSoft : 'transparent', border: 'none', cursor: 'pointer',
+              transition: 'background 0.2s ease',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <span style={{ fontSize: 26 }}>🧱</span>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontFamily: serif, fontSize: 19, fontWeight: 500, color: T.ink }}>Gevel</div>
+                  <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font }}>Ramen, voordeur, kleur en meer</div>
                 </div>
-              )}
-              {optGroup('🏠 Dakkapel',
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_KAPEL.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+              </div>
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                border: `2px solid ${scopes.gevel ? T.accent : T.lineStrong}`,
+                background: scopes.gevel ? T.accent : T.surface,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white', fontSize: 13, fontWeight: 700,
+              }}>
+                {scopes.gevel ? '✓' : '+'}
+              </div>
+            </button>
+            {scopes.gevel && (
+              <div style={{ padding: '0 24px 24px', borderTop: `1px solid ${T.line}`, paddingTop: 20 }}>
+                {optGroup('🪟 Ramen stijl',
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {GEVEL_RAMEN.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
+                    ))}
+                  </div>
+                )}
+                {optGroup('🚪 Voordeur stijl',
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {GEVEL_DEUR.map(opt => (
+                      <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
+                    ))}
+                  </div>
+                )}
+                {optGroup('🎨 Kleur voordeur',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 }}>
+                    {GEVEL_DEURKLEUREN.map(c => (
+                      <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
-          {/* GEVEL options */}
-          {scopes.gevel && (
-            <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 20, padding: 24 }}>
-              <div style={{ fontFamily: serif, fontSize: 17, fontWeight: 500, color: T.ink, marginBottom: 18, paddingBottom: 14, borderBottom: `1px solid ${T.line}` }}>🧱 Gevel opties</div>
-              {optGroup('🪟 Ramen stijl',
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_RAMEN.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
-                  ))}
-                </div>
-              )}
-              {optGroup('🚪 Voordeur stijl',
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_DEUR.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
-                  ))}
-                </div>
-              )}
-              {optGroup('🎨 Kleur voordeur',
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 }}>
-                  {GEVEL_DEURKLEUREN.map(c => (
-                    <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.deurkleur === c.name} onClick={() => onGevelChange('deurkleur', c.name)} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {!anySelected && (
-            <div style={{ background: T.surface, border: `2px dashed ${T.lineStrong}`, borderRadius: 20, padding: 32, textAlign: 'center' }}>
-              <p style={{ color: T.inkMuted, fontFamily: font, fontSize: 15 }}>Kies hierboven Dak en/of Gevel om de opties te zien.</p>
-            </div>
-          )}
         </div>
       </div>
 
