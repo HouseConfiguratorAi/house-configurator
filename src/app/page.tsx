@@ -814,6 +814,110 @@ function Step2Scope({
 }
 
 /* ================================================================
+   STEP 3 SVG ICON LIBRARY
+   ================================================================ */
+
+/* — Roof shape types — */
+function RoofTypeSvg({ type }: { type: string }) {
+  const body = <rect x="4" y="32" width="36" height="10" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/>;
+  if (type === 'zadel') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{body}<path d="M4 32L22 10L40 32Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/></svg>;
+  if (type === 'plat') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="18" width="36" height="6" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8"/><rect x="6" y="24" width="32" height="16" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/></svg>;
+  if (type === 'schild') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{body}<path d="M12 18L32 18L40 32L4 32Z" fill="#d4d0c8" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/><path d="M12 18L22 10L32 18" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/></svg>;
+  if (type === 'mansarde') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{body}<path d="M4 32L10 20L34 20L40 32Z" fill="#c8c4bc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/><rect x="10" y="12" width="24" height="8" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5"/></svg>;
+  if (type === 'tent') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><path d="M22 6L40 28L22 40L4 28Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/><line x1="22" y1="6" x2="22" y2="40" stroke="#1a1d1f" strokeWidth="1"/><line x1="4" y1="28" x2="40" y2="28" stroke="#1a1d1f" strokeWidth="1"/></svg>;
+  if (type === 'lessenaars') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{body}<path d="M4 32L40 14L40 32Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/></svg>;
+  return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{body}<path d="M4 14L22 32L40 14" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/></svg>;
+}
+
+/* — Roof material texture swatches — */
+function RoofMaterialSvg({ type }: { type: string }) {
+  if (type === 'dakpannen') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#c4835a" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3].map(row=>[0,1,2,3,4].map(col=><path key={`${row}-${col}`} d={`M${4+col*8+(row%2===0?0:4)} ${9+row*8} Q${8+col*8+(row%2===0?0:4)} ${5+row*8} ${12+col*8+(row%2===0?0:4)} ${9+row*8}`} stroke="#8b5530" strokeWidth="1.2"/>))}</svg>;
+  if (type === 'leien') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#4a5568" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4].map(row=>[0,1,2,3].map(col=><rect key={`${row}-${col}`} x={4+col*9+(row%2===0?0:4.5)} y={4+row*7} width="8" height="6" rx="0.5" fill="#5a6680" stroke="#2d3748" strokeWidth="0.8"/>))}</svg>;
+  if (type === 'epdm') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#1f2937" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="10" y="19" width="24" height="5" rx="2" fill="#374151"/></svg>;
+  if (type === 'roofing') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#374151" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5].map(i=><line key={i} x1="6" y1={10+i*5} x2="38" y2={10+i*5} stroke="#4b5563" strokeWidth="1.5"/>)}</svg>;
+  if (type === 'metaal') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#9ca3af" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4].map(i=><line key={i} x1={9+i*7} y1="6" x2={9+i*7} y2="38" stroke="#6b7280" strokeWidth="2.5"/>)}</svg>;
+  if (type === 'groen') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#5a7a50" stroke="#1a1d1f" strokeWidth="1.5"/>{[[8,30],[15,26],[22,32],[29,27],[36,30],[10,38],[22,38],[34,38]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill="#3d5c35" opacity="0.85"/>)}</svg>;
+  if (type === 'zink') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#8fa0b4" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5].map(i=><line key={i} x1={4+i*6} y1="4" x2={4+i*6+30} y2="40" stroke="#7a8fa3" strokeWidth="1" opacity="0.7"/>)}</svg>;
+  if (type === 'keramisch') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#c4733a" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4].map(row=>[0,1,2,3].map(col=><rect key={`${row}-${col}`} x={4+col*9} y={4+row*7} width="9" height="7" fill="none" stroke="#a05828" strokeWidth="0.8"/>))}</svg>;
+  return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#9ca3af" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4].map(row=>[0,1].map(col=><rect key={`${row}-${col}`} x={4+col*18} y={4+row*7} width="18" height="7" fill="none" stroke="#6b7280" strokeWidth="0.8"/>))}</svg>;
+}
+
+/* — Gutter cross-section — */
+function GutterSvg({ material }: { material: string }) {
+  const c: Record<string, { fill: string; stroke: string }> = {
+    'Zink': { fill: '#8fa0b4', stroke: '#6b7280' },
+    'Aluminium': { fill: '#d1d5db', stroke: '#9ca3af' },
+    'PVC': { fill: '#fef9c3', stroke: '#ca8a04' },
+    'Koper': { fill: '#b45309', stroke: '#92400e' },
+    'Staal': { fill: '#6b7280', stroke: '#374151' },
+  };
+  const { fill, stroke } = c[material] ?? c['Staal'];
+  return (
+    <svg viewBox="0 0 44 44" fill="none" width="48" height="48">
+      <line x1="4" y1="16" x2="40" y2="16" stroke="#1a1d1f" strokeWidth="2"/>
+      <path d="M6 16 L6 26 Q6 30 10 30 L34 30 Q38 30 38 26 L38 16" fill={fill} stroke={stroke} strokeWidth="1.8"/>
+      <rect x="30" y="30" width="5" height="12" rx="1" fill={fill} stroke={stroke} strokeWidth="1.5"/>
+    </svg>
+  );
+}
+
+/* — Facade finish texture swatches — */
+function FacadeFinishSvg({ type }: { type: string }) {
+  if (type === 'crepi') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#e8dcc8" stroke="#1a1d1f" strokeWidth="1.5"/>{[[8,10],[14,8],[10,16],[20,12],[26,8],[22,18],[30,14],[34,10],[16,24],[28,22],[12,30],[24,28],[36,26],[10,36],[22,34],[32,32]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="1.5" fill="#c8b89a"/>)}</svg>;
+  if (type === 'gevelpleister') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="6" y="6" width="8" height="32" rx="1" fill="white" opacity="0.35"/></svg>;
+  if (type === 'hout') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#c4935a" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5,6].map(i=><line key={i} x1="6" y1={9+i*5} x2="38" y2={9+i*5} stroke="#8b5e3c" strokeWidth="1.5"/>)}</svg>;
+  if (type === 'steenstrips') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#c4835a" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5].map(row=>[0,1,2].map(col=><rect key={`${row}-${col}`} x={4+col*12+(row%2===0?0:6)} y={5+row*6} width="11" height="5" rx="0.5" fill="#b07040" stroke="#8b4820" strokeWidth="0.8"/>))}</svg>;
+  if (type === 'gevelpanelen') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#e0ddd8" stroke="#1a1d1f" strokeWidth="1.5"/><line x1="22" y1="4" x2="22" y2="40" stroke="#aaa8a4" strokeWidth="1.5"/><line x1="4" y1="22" x2="40" y2="22" stroke="#aaa8a4" strokeWidth="1.5"/></svg>;
+  if (type === 'schilderwerk') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#f5f3ee" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="12" y="14" width="20" height="10" rx="5" fill="#c8553d" stroke="#1a1d1f" strokeWidth="1.5"/><line x1="22" y1="24" x2="22" y2="34" stroke="#1a1d1f" strokeWidth="2"/><line x1="16" y1="34" x2="28" y2="34" stroke="#1a1d1f" strokeWidth="2" strokeLinecap="round"/></svg>;
+  if (type === 'baksteen') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#c4733a" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5].map(row=>[0,1].map(col=><rect key={`${row}-${col}`} x={4+col*18+(row%2===0?0:9)} y={5+row*6} width="17" height="5" rx="0.5" fill="#b35c28" stroke="#8b4420" strokeWidth="0.8"/>))}</svg>;
+  if (type === 'natuursteen') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#9ca3af" stroke="#1a1d1f" strokeWidth="1.5"/><path d="M6 8L16 6L20 14L12 18L6 16Z" fill="#8fa0b4" stroke="#6b7280" strokeWidth="0.8"/><path d="M18 7L32 6L36 12L28 18L18 14Z" fill="#7a8fa3" stroke="#6b7280" strokeWidth="0.8"/><path d="M6 20L18 18L22 28L10 30L6 26Z" fill="#8fa0b4" stroke="#6b7280" strokeWidth="0.8"/><path d="M22 20L36 18L38 28L24 32Z" fill="#7a8fa3" stroke="#6b7280" strokeWidth="0.8"/><path d="M8 32L20 30L22 38L10 38Z" fill="#8fa0b4" stroke="#6b7280" strokeWidth="0.8"/><path d="M24 32L36 30L38 38L26 38Z" fill="#7a8fa3" stroke="#6b7280" strokeWidth="0.8"/></svg>;
+  if (type === 'composiet') return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#6b7280" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3,4,5].map(i=><rect key={i} x="6" y={6+i*5} width="32" height="4" rx="0.5" fill="#7a8fa3" stroke="#4b5563" strokeWidth="0.6"/>)}</svg>;
+  return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" rx="2" fill="#d1d5db" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2].map(row=>[0,1,2].map(col=><rect key={`${row}-${col}`} x={4+col*12} y={4+row*12} width="12" height="12" fill="none" stroke="#9ca3af" strokeWidth="0.8"/>))}</svg>;
+}
+
+/* — Which facades — */
+function FacadeViewSvg({ view }: { view: string }) {
+  const hi = '#c8553d';
+  const front = view==='voor'||view==='alle';
+  const right = view==='rechts'||view==='alle';
+  const left  = view==='links'||view==='alle';
+  return (
+    <svg viewBox="0 0 44 44" fill="none" width="48" height="48">
+      <path d="M6 20L22 8L38 20Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/>
+      <rect x="6" y="20" width="26" height="20" fill={front ? '#fde8e4' : '#f0ede8'} stroke={front ? hi : '#1a1d1f'} strokeWidth={front ? 2 : 1.5}/>
+      <path d="M32 20L40 25L40 40L32 40Z" fill={right ? '#fde8e4' : '#e0ddd8'} stroke={right ? hi : '#1a1d1f'} strokeWidth={right ? 2 : 1.5} strokeLinejoin="round"/>
+      {left && <path d="M6 20L0 25L0 40L6 40Z" fill="#fde8e4" stroke={hi} strokeWidth="2" strokeLinejoin="round"/>}
+      {front && <rect x="14" y="29" width="8" height="11" fill={hi} stroke="#1a1d1f" strokeWidth="1"/>}
+      {view==='achter' && <path d="M16 24L22 20L28 24" stroke={hi} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>}
+    </svg>
+  );
+}
+
+/* — Dak extras — */
+function DakExtraSvg({ type }: { type: string }) {
+  if (type.includes('Dakgoten')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><line x1="4" y1="16" x2="40" y2="16" stroke="#1a1d1f" strokeWidth="2"/><path d="M6 16 L6 26 Q6 30 10 30 L34 30 Q38 30 38 26 L38 16" fill="#9ca3af" stroke="#6b7280" strokeWidth="1.8"/><rect x="30" y="30" width="4" height="12" rx="1" fill="#9ca3af" stroke="#6b7280" strokeWidth="1.2"/></svg>;
+  if (type.includes('Isolatie')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><path d="M4 30L22 10L40 30" stroke="#1a1d1f" strokeWidth="1.5" fill="none"/>{[0,1,2,3].map(i=><path key={i} d={`M${6+i*9} ${28-i*4} Q${10.5+i*9} ${22-i*4} ${15+i*9} ${28-i*4}`} fill="#fef3c7" stroke="#ca8a04" strokeWidth="1.2"/>)}</svg>;
+  if (type.includes('Dakkapel')) return <RoofSvg dormer="small"/>;
+  if (type.includes('Dakraam')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><path d="M4 36L22 12L40 36Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/><rect x="16" y="21" width="12" height="9" rx="1" fill="#dbeafe" stroke="#374151" strokeWidth="1.5"/></svg>;
+  if (type.includes('Schoorsteen')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><path d="M4 34L22 12L40 34Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/><rect x="16" y="8" width="8" height="14" fill="#c4835a" stroke="#8b5530" strokeWidth="1.5"/><rect x="14" y="6" width="12" height="4" rx="1" fill="#b87040" stroke="#8b5530" strokeWidth="1.2"/></svg>;
+  if (type.includes('Regenwaterput')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48">{[[13,8],[21,4],[29,8],[17,15],[25,14]].map(([cx,cy],i)=><path key={i} d={`M${cx} ${cy+5}Q${cx-2} ${cy+2} ${cx} ${cy}Q${cx+2} ${cy+2} ${cx} ${cy+5}Z`} fill="#3b82f6"/>)}<ellipse cx="22" cy="34" rx="14" ry="7" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.5"/><rect x="8" y="28" width="28" height="8" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.5"/><ellipse cx="22" cy="28" rx="14" ry="4" fill="#93c5fd" stroke="#3b82f6" strokeWidth="1.5"/></svg>;
+  if (type.includes('Zonneboiler')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="6" width="22" height="16" rx="1" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.5"/><line x1="15" y1="6" x2="15" y2="22" stroke="#3b82f6" strokeWidth="0.8"/><line x1="4" y1="14" x2="26" y2="14" stroke="#3b82f6" strokeWidth="0.8"/><ellipse cx="35" cy="30" rx="7" ry="10" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><path d="M26 16Q30 16 30 24" stroke="#9ca3af" strokeWidth="1.5" fill="none"/></svg>;
+  return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><path d="M4 34L22 12L40 34Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/><rect x="18" y="23" width="8" height="6" rx="1" fill="#9ca3af" stroke="#6b7280" strokeWidth="1.2"/><path d="M18 23L16 19L28 19L26 23" fill="#b0ada8" stroke="#6b7280" strokeWidth="1"/><path d="M30 18L34 14M32 14L34 14L34 16" stroke="#3b82f6" strokeWidth="1.2" strokeLinecap="round"/></svg>;
+}
+
+/* — Gevel extras — */
+function GevelExtraSvg({ type }: { type: string }) {
+  if (type.includes('Gevelisolatie')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="12" height="36" fill="#e8dcc8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="16" y="4" width="10" height="36" fill="#fef3c7" stroke="#ca8a04" strokeWidth="1.5"/>{[0,1,2,3,4].map(i=><path key={i} d={`M16 ${9+i*7}Q20 ${7+i*7} 24 ${9+i*7}Q28 ${11+i*7} 26 ${9+i*7}`} stroke="#ca8a04" strokeWidth="0.8" fill="none"/>)}<rect x="26" y="4" width="14" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/></svg>;
+  if (type.includes('Raamomlijsting')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="10" y="10" width="24" height="20" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/><rect x="8" y="8" width="28" height="24" fill="none" stroke="#c8b89a" strokeWidth="4"/></svg>;
+  if (type.includes('Plint')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="28" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="4" y="32" width="36" height="8" fill="#c8b89a" stroke="#1a1d1f" strokeWidth="1.5"/></svg>;
+  if (type.includes('Regenpijpen')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="32" y="4" width="6" height="32" rx="2" fill="#9ca3af" stroke="#6b7280" strokeWidth="1.2"/><path d="M32 36Q32 42 26 42" stroke="#9ca3af" strokeWidth="2" fill="none"/></svg>;
+  if (type.includes('Luiken')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="14" y="10" width="16" height="22" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/><rect x="6" y="10" width="7" height="22" fill="#c4935a" stroke="#8b5e3c" strokeWidth="1.2"/>{[0,1,2,3,4].map(i=><line key={i} x1="6" y1={13+i*4} x2="13" y2={13+i*4} stroke="#8b5e3c" strokeWidth="0.8"/>)}<rect x="31" y="10" width="7" height="22" fill="#c4935a" stroke="#8b5e3c" strokeWidth="1.2"/>{[0,1,2,3,4].map(i=><line key={i} x1="31" y1={13+i*4} x2="38" y2={13+i*4} stroke="#8b5e3c" strokeWidth="0.8"/>)}</svg>;
+  if (type.includes('Rolluiken')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="4" width="36" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/><rect x="10" y="10" width="24" height="22" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/><rect x="10" y="10" width="24" height="12" fill="#9ca3af" stroke="#6b7280" strokeWidth="1.2"/>{[0,1,2,3].map(i=><line key={i} x1="10" y1={13+i*3} x2="34" y2={13+i*3} stroke="#6b7280" strokeWidth="0.8"/>)}</svg>;
+  if (type.includes('Terrasoverkapping')) return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="6" y="22" width="3" height="18" fill="#c4935a" stroke="#8b5e3c" strokeWidth="1"/><rect x="35" y="22" width="3" height="18" fill="#c4935a" stroke="#8b5e3c" strokeWidth="1"/><path d="M2 16L42 22L42 24L2 18Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5"/>{[0,1,2,3].map(i=><line key={i} x1="6" y1={18+i*1.5} x2="38" y2={19.5+i*1.5} stroke="#d4cebf" strokeWidth="0.8"/>)}<rect x="4" y="38" width="36" height="4" fill="#d4cebf" stroke="#1a1d1f" strokeWidth="1"/></svg>;
+  return <svg viewBox="0 0 44 44" fill="none" width="48" height="48"><rect x="4" y="14" width="3" height="22" fill="#9ca3af" stroke="#6b7280" strokeWidth="1"/><rect x="37" y="14" width="3" height="22" fill="#9ca3af" stroke="#6b7280" strokeWidth="1"/><rect x="2" y="10" width="40" height="5" fill="#6b7280" stroke="#374151" strokeWidth="1.5"/><rect x="8" y="28" width="28" height="8" rx="2" fill="#4b5563" stroke="#374151" strokeWidth="1.2"/><path d="M12 28L14 22L30 22L32 28" fill="#374151" stroke="#374151" strokeWidth="1"/><circle cx="14" cy="37" r="3" fill="#1f2937" stroke="#374151" strokeWidth="1"/><circle cx="30" cy="37" r="3" fill="#1f2937" stroke="#374151" strokeWidth="1"/></svg>;
+}
+
+/* ================================================================
    STEP 3 — CONFIGURATION
    ================================================================ */
 function QuickOptionBlock({ title, children }: { title: string; children: React.ReactNode }) {
@@ -906,37 +1010,37 @@ function Step3Config({
               title="Dak — materiaal & kleur"
             >
               <ConfigGroup label="Type dak">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_TYPES.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.type === opt} onClick={() => onDakChange('type', opt)} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                  {[['Zadeldak','zadel'],['Plat dak','plat'],['Schilddak','schild'],['Mansardedak','mansarde'],['Tentdak','tent'],['Lessenaarsdak','lessenaars'],['Vlinderdak','vlinder']].map(([label, type]) => (
+                    <PicTile key={label} svg={<RoofTypeSvg type={type}/>} label={label} selected={config.dak.type === label} onClick={() => onDakChange('type', label)}/>
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Dakbedekking">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {DAK_BEDEKKING.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.bedekking === opt} onClick={() => onDakChange('bedekking', opt)} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                  {[['Dakpannen','dakpannen'],['Leien','leien'],['EPDM','epdm'],['Roofing/bitumen','roofing'],['Metalen dakpanelen','metaal'],['Groendak','groen'],['Zink','zink'],['Keramische pannen','keramisch'],['Betonpannen','beton']].map(([label, type]) => (
+                    <PicTile key={label} svg={<RoofMaterialSvg type={type}/>} label={label} selected={config.dak.bedekking === label} onClick={() => onDakChange('bedekking', label)}/>
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Kleur dak">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
                   {DAK_KLEUREN.map(c => (
                     <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.dak.kleur === c.name} onClick={() => onDakChange('kleur', c.name)} />
                   ))}
                 </div>
               </ConfigGroup>
-              <ConfigGroup label="Dakgoot materiaal">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <ConfigGroup label="Dakgoot">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
                   {DAK_GOOT.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.dak.dakgoot === opt} onClick={() => onDakChange('dakgoot', opt)} />
+                    <PicTile key={opt} svg={<GutterSvg material={opt}/>} label={opt} selected={config.dak.dakgoot === opt} onClick={() => onDakChange('dakgoot', opt)}/>
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Extra opties">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
                   {DAK_EXTRAS.map(opt => (
-                    <CheckTile key={opt} label={opt} selected={config.dak.extras.includes(opt)} onClick={() => onDakChange('extras', toggleArr(config.dak.extras, opt))} />
+                    <PicTile key={opt} svg={<DakExtraSvg type={opt}/>} label={opt} selected={config.dak.extras.includes(opt)} onClick={() => onDakChange('extras', toggleArr(config.dak.extras, opt))}/>
                   ))}
                 </div>
               </ConfigGroup>
@@ -949,33 +1053,30 @@ function Step3Config({
               title="Gevel — materiaal & kleur"
             >
               <ConfigGroup label="Type gevelafwerking">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_AFWERKING.map(opt => (
-                    <Pill key={opt} label={opt} selected={config.gevel.afwerking === opt} onClick={() => onGevelChange('afwerking', opt)} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                  {[['Crepi','crepi'],['Gevelpleister','gevelpleister'],['Houten gevelbekleding','hout'],['Steenstrips','steenstrips'],['Gevelpanelen','gevelpanelen'],['Schilderwerk','schilderwerk'],['Baksteen','baksteen'],['Natuursteen','natuursteen'],['Composiet','composiet'],['Betonlook','beton']].map(([label, type]) => (
+                    <PicTile key={label} svg={<FacadeFinishSvg type={type}/>} label={label} selected={config.gevel.afwerking === label} onClick={() => onGevelChange('afwerking', label)}/>
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Welke gevels?">
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GEVEL_GEVELS.map(opt => (
-                    <Pill key={opt} label={opt}
-                      selected={config.gevel.gevels.includes(opt)}
-                      onClick={() => onGevelChange('gevels', toggleArr(config.gevel.gevels, opt))}
-                    />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                  {[['Voorgevel','voor'],['Achtergevel','achter'],['Linkergevel','links'],['Rechtergevel','rechts'],['Alle gevels','alle']].map(([label, view]) => (
+                    <PicTile key={label} svg={<FacadeViewSvg view={view}/>} label={label} selected={config.gevel.gevels.includes(label)} onClick={() => onGevelChange('gevels', toggleArr(config.gevel.gevels, label))}/>
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Kleur gevel">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
                   {GEVEL_KLEUREN.map(c => (
                     <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.kleur === c.name} onClick={() => onGevelChange('kleur', c.name)} />
                   ))}
                 </div>
               </ConfigGroup>
               <ConfigGroup label="Extra opties">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
                   {GEVEL_EXTRAS.map(opt => (
-                    <CheckTile key={opt} label={opt} selected={config.gevel.extras.includes(opt)} onClick={() => onGevelChange('extras', toggleArr(config.gevel.extras, opt))} />
+                    <PicTile key={opt} svg={<GevelExtraSvg type={opt}/>} label={opt} selected={config.gevel.extras.includes(opt)} onClick={() => onGevelChange('extras', toggleArr(config.gevel.extras, opt))}/>
                   ))}
                 </div>
               </ConfigGroup>
