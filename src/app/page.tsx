@@ -654,7 +654,14 @@ function Step2Scope({
               transition: 'background 0.2s ease',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <span style={{ fontSize: 26 }}>🏠</span>
+                <div style={{ width: 44, height: 44, background: scopes.dak ? T.surface : T.bg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg viewBox="0 0 44 44" fill="none" width="36" height="36">
+                    <path d="M4 22L22 6L40 22" stroke="#1a1d1f" strokeWidth="2" strokeLinejoin="round"/>
+                    <rect x="6" y="22" width="32" height="16" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.8"/>
+                    <rect x="17" y="28" width="10" height="10" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.4"/>
+                    <path d="M4 22L22 6L40 22" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.8" strokeLinejoin="round"/>
+                  </svg>
+                </div>
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontFamily: serif, fontSize: 19, fontWeight: 500, color: T.ink }}>Dak</div>
                   <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font }}>Zonnepanelen, dakkapel en meer</div>
@@ -715,7 +722,15 @@ function Step2Scope({
               transition: 'background 0.2s ease',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <span style={{ fontSize: 26 }}>🧱</span>
+                <div style={{ width: 44, height: 44, background: scopes.gevel ? T.surface : T.bg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg viewBox="0 0 44 44" fill="none" width="36" height="36">
+                    <rect x="4" y="4" width="36" height="36" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.8" rx="1"/>
+                    <rect x="9" y="9" width="10" height="8" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/>
+                    <rect x="25" y="9" width="10" height="8" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/>
+                    <rect x="16" y="26" width="12" height="14" fill="#e8d5b7" stroke="#1a1d1f" strokeWidth="1.2"/>
+                    <line x1="4" y1="22" x2="40" y2="22" stroke="#1a1d1f" strokeWidth="1.2"/>
+                  </svg>
+                </div>
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontFamily: serif, fontSize: 19, fontWeight: 500, color: T.ink }}>Gevel</div>
                   <div style={{ fontSize: 13, color: T.inkSoft, fontFamily: font }}>Ramen, voordeur, kleur en meer</div>
