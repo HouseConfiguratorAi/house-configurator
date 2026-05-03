@@ -693,6 +693,13 @@ function Step2Scope({
                     <PicTile svg={<RoofSvg dormer="double"/>} label="Meerdere" selected={config.dak.dakkapel === 'Meerdere dakkapellen'} onClick={() => onDakChange('dakkapel', 'Meerdere dakkapellen')}/>
                   </div>
                 )}
+                {optGroup('Kleur dak',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                    {DAK_KLEUREN.map(c => (
+                      <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.dak.kleur === c.name} onClick={() => onDakChange('kleur', c.name)}/>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -746,6 +753,13 @@ function Step2Scope({
                     <PicTile svg={<DoorSvg type="hout"/>} label="Hout" selected={config.gevel.deur === 'Voordeur hout'} onClick={() => onGevelChange('deur', 'Voordeur hout')}/>
                     <PicTile svg={<DoorSvg type="draai"/>} label="Draai" selected={config.gevel.deur === 'Draaideuren'} onClick={() => onGevelChange('deur', 'Draaideuren')}/>
                     <PicTile svg={<DoorSvg type="schuif"/>} label="Schuif" selected={config.gevel.deur === 'Schuifdeuren'} onClick={() => onGevelChange('deur', 'Schuifdeuren')}/>
+                  </div>
+                )}
+                {optGroup('Kleur gevel',
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
+                    {GEVEL_KLEUREN.map(c => (
+                      <ColorSwatch key={c.name} name={c.name} hex={c.hex} selected={config.gevel.kleur === c.name} onClick={() => onGevelChange('kleur', c.name)}/>
+                    ))}
                   </div>
                 )}
                 {optGroup('Kleur voordeur',
