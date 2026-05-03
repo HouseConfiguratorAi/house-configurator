@@ -280,18 +280,168 @@ function ColorSwatch({ name, hex, selected, onClick }: { name: string; hex: stri
   );
 }
 
-function IconTile({ emoji, label, selected, onClick }: { emoji: string; label: string; selected: boolean; onClick: () => void }) {
+function PicTile({ svg, label, selected, onClick }: { svg: React.ReactNode; label: string; selected: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      gap: 6, padding: '14px 8px', borderRadius: 14, cursor: 'pointer',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      gap: 6, padding: '12px 6px 10px', borderRadius: 14, cursor: 'pointer',
       border: `2px solid ${selected ? T.accent : T.line}`,
       background: selected ? T.accentSoft : T.surface,
-      transition: 'all 0.15s ease', minWidth: 0,
+      transition: 'all 0.15s ease',
     }}>
-      <span style={{ fontSize: 28, lineHeight: 1 }}>{emoji}</span>
+      <div style={{ width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{svg}</div>
       <span style={{ fontSize: 11, fontWeight: 600, color: selected ? T.accentDeep : T.inkSoft, fontFamily: font, textAlign: 'center', lineHeight: 1.2 }}>{label}</span>
     </button>
+  );
+}
+
+/* SVG icon helpers */
+const SvgNone = () => (
+  <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+    <circle cx="24" cy="24" r="19" stroke="#d4cebf" strokeWidth="2"/>
+    <line x1="13" y1="13" x2="35" y2="35" stroke="#d4cebf" strokeWidth="2.5" strokeLinecap="round"/>
+  </svg>
+);
+
+function SolarGrid({ cols, rows, badge }: { cols: number; rows: number; badge?: string }) {
+  const gap = 2, vw = 48, vh = 44;
+  const pw = (vw - gap * (cols - 1)) / cols;
+  const ph = (vh - gap * (rows - 1)) / rows;
+  const cells: React.ReactNode[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const x = c * (pw + gap), y = 2 + r * (ph + gap);
+      cells.push(
+        <g key={`${r}-${c}`}>
+          <rect x={x} y={y} width={pw} height={ph} rx="1" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.2"/>
+          <line x1={x + pw / 2} y1={y} x2={x + pw / 2} y2={y + ph} stroke="#3b82f6" strokeWidth="0.6"/>
+          <line x1={x} y1={y + ph / 2} x2={x + pw} y2={y + ph / 2} stroke="#3b82f6" strokeWidth="0.6"/>
+        </g>
+      );
+    }
+  }
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      {cells}
+      {badge && <text x="24" y="47" textAnchor="middle" fontSize="7" fill="#1d4ed8" fontWeight="700">{badge}</text>}
+    </svg>
+  );
+}
+
+function RoofSvg({ dormer }: { dormer?: 'small' | 'large' | 'terrace' | 'double' }) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x="6" y="32" width="36" height="13" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="1.5"/>
+      <path d="M3 32L24 10L45 32Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.5" strokeLinejoin="round"/>
+      {dormer === 'small' && <>
+        <path d="M17 24L24 17L31 24Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.2"/>
+        <rect x="17" y="24" width="14" height="8" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/>
+      </>}
+      {dormer === 'large' && <>
+        <path d="M12 24L24 14L36 24Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.2"/>
+        <rect x="12" y="24" width="24" height="8" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/>
+      </>}
+      {dormer === 'terrace' && <>
+        <path d="M11 23L24 13L37 23Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.2"/>
+        <rect x="11" y="23" width="26" height="9" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.2"/>
+        <line x1="11" y1="32" x2="37" y2="32" stroke="#1a1d1f" strokeWidth="1.5"/>
+        {[15, 21, 27, 33].map(cx => <line key={cx} x1={cx} y1="29" x2={cx} y2="32" stroke="#1a1d1f" strokeWidth="1"/>)}
+      </>}
+      {dormer === 'double' && <>
+        <path d="M7 27L14 20L21 27Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.1"/>
+        <rect x="7" y="27" width="14" height="5" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.1"/>
+        <path d="M27 27L34 20L41 27Z" fill="#e8e4dc" stroke="#1a1d1f" strokeWidth="1.1"/>
+        <rect x="27" y="27" width="14" height="5" fill="#dbeafe" stroke="#1a1d1f" strokeWidth="1.1"/>
+      </>}
+    </svg>
+  );
+}
+
+function WindowSvg({ type }: { type: 'neutral' | 'hout' | 'pvc-wit' | 'pvc-zwart' | 'alu' | 'staal' | 'panorama' }) {
+  const cfg: Record<string, { stroke: string; fw: number; fill: string; extra?: boolean }> = {
+    neutral:    { stroke: '#9ca3af', fw: 2,   fill: '#e8f4fd' },
+    hout:       { stroke: '#8b5e3c', fw: 4,   fill: '#e8d5b7' },
+    'pvc-wit':  { stroke: '#d1d5db', fw: 2.5, fill: '#f0f8ff' },
+    'pvc-zwart':{ stroke: '#1f2937', fw: 2.5, fill: '#e8f4fd' },
+    alu:        { stroke: '#9ca3af', fw: 1,   fill: '#e8f4fd' },
+    staal:      { stroke: '#374151', fw: 2,   fill: '#e8f4fd', extra: true },
+    panorama:   { stroke: '#374151', fw: 2,   fill: '#e8f4fd' },
+  };
+  const { stroke, fw, fill, extra } = cfg[type] ?? cfg.neutral;
+  if (type === 'panorama') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x="2" y="14" width="44" height="22" rx="1" fill={fill} stroke={stroke} strokeWidth={fw}/>
+      <line x1="17" y1="14" x2="17" y2="36" stroke={stroke} strokeWidth={fw * 0.7}/>
+      <line x1="31" y1="14" x2="31" y2="36" stroke={stroke} strokeWidth={fw * 0.7}/>
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x="6" y="6" width="36" height="36" rx="1" fill={fill} stroke={stroke} strokeWidth={fw}/>
+      <line x1="24" y1="6" x2="24" y2="42" stroke={stroke} strokeWidth={fw * 0.6}/>
+      <line x1="6" y1="24" x2="42" y2="24" stroke={stroke} strokeWidth={fw * 0.6}/>
+      {extra && <>
+        <line x1="15" y1="6" x2="15" y2="42" stroke={stroke} strokeWidth="0.8"/>
+        <line x1="33" y1="6" x2="33" y2="42" stroke={stroke} strokeWidth="0.8"/>
+      </>}
+    </svg>
+  );
+}
+
+function DoorSvg({ type }: { type: 'neutral' | 'klassiek' | 'modern' | 'staal' | 'hout' | 'draai' | 'schuif' }) {
+  const dx = 12, dy = 4, dw = 24, dh = 40;
+  if (type === 'klassiek') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} rx="1" fill="#f5efe6" stroke="#1a1d1f" strokeWidth="2"/>
+      <rect x={dx+3} y={dy+4} width={dw-6} height={15} rx="1" stroke="#1a1d1f" strokeWidth="1"/>
+      <rect x={dx+3} y={dy+23} width={dw-6} height={14} rx="1" stroke="#1a1d1f" strokeWidth="1"/>
+      <circle cx={dx+dw-5} cy={dy+dh/2} r="2" fill="#c8553d"/>
+    </svg>
+  );
+  if (type === 'modern') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} rx="2" fill="#f0ede8" stroke="#1a1d1f" strokeWidth="2"/>
+      <line x1={dx+5} y1={dy+6} x2={dx+5} y2={dy+dh-6} stroke="#c8553d" strokeWidth="2.5"/>
+      <line x1={dx+dw-6} y1={dy+dh/2-7} x2={dx+dw-6} y2={dy+dh/2+7} stroke="#1a1d1f" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'staal') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} fill="#4b5563" stroke="#374151" strokeWidth="2"/>
+      {[10,20,30].map(offset => <line key={offset} x1={dx+2} y1={dy+offset} x2={dx+dw-2} y2={dy+offset} stroke="#6b7280" strokeWidth="1.5"/>)}
+      <circle cx={dx+dw-5} cy={dy+dh/2} r="2.5" fill="#9ca3af"/>
+    </svg>
+  );
+  if (type === 'hout') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} rx="1" fill="#c4935a" stroke="#7c4e1e" strokeWidth="2"/>
+      {[8,16].map(offset => <line key={offset} x1={dx+offset} y1={dy+2} x2={dx+offset} y2={dy+dh-2} stroke="#7c4e1e" strokeWidth="1.2"/>)}
+      <circle cx={dx+dw-5} cy={dy+dh/2} r="2" fill="#1a1d1f"/>
+    </svg>
+  );
+  if (type === 'draai') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} stroke="#9ca3af" strokeWidth="1.5" fill="none" strokeDasharray="3 2"/>
+      <path d={`M${dx} ${dy} L${dx+dw-3} ${dy+4} L${dx+dw-3} ${dy+dh-4} L${dx} ${dy+dh}Z`} fill="#f0ede8" stroke="#1a1d1f" strokeWidth="2"/>
+      <line x1={dx} y1={dy} x2={dx} y2={dy+dh} stroke="#c8553d" strokeWidth="2"/>
+      <line x1={dx+dw-10} y1={dy+dh/2-6} x2={dx+dw-10} y2={dy+dh/2+6} stroke="#1a1d1f" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'schuif') return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <line x1="4" y1="6" x2="44" y2="6" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+      <rect x={dx} y="6" width={dw} height={dh} rx="1" fill="#dbeafe" stroke="#374151" strokeWidth="2"/>
+      <line x1="24" y1="8" x2="24" y2={6+dh-2} stroke="#374151" strokeWidth="1.2"/>
+      <circle cx="14" cy="6" r="3" fill="#d4cebf" stroke="#9ca3af" strokeWidth="1"/>
+      <circle cx="34" cy="6" r="3" fill="#d4cebf" stroke="#9ca3af" strokeWidth="1"/>
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+      <rect x={dx} y={dy} width={dw} height={dh} rx="1" fill="#f5f3ee" stroke="#9ca3af" strokeWidth="1.5"/>
+      <line x1="24" y1={dy+2} x2="24" y2={dy+dh-2} stroke="#9ca3af" strokeWidth="1"/>
+      <circle cx={dx+dw-5} cy={dy+dh/2} r="1.5" fill="#9ca3af"/>
+    </svg>
   );
 }
 
@@ -524,31 +674,23 @@ function Step2Scope({
               <div style={{ padding: '20px 24px 24px', borderTop: `1px solid ${T.line}` }}>
                 {optGroup('Zonnepanelen',
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {[
-                      { opt: 'Geen',        emoji: '🚫' },
-                      { opt: '4 panelen',   emoji: '☀️', short: '4' },
-                      { opt: '6 panelen',   emoji: '☀️', short: '6' },
-                      { opt: '8 panelen',   emoji: '☀️', short: '8' },
-                      { opt: '10 panelen',  emoji: '☀️', short: '10' },
-                      { opt: '12 panelen',  emoji: '☀️', short: '12' },
-                      { opt: '16 panelen',  emoji: '☀️', short: '16' },
-                      { opt: '20+ panelen', emoji: '☀️', short: '20+' },
-                    ].map(({ opt, emoji, short }) => (
-                      <IconTile key={opt} emoji={emoji} label={short ?? opt} selected={config.dak.zonnepanelen === opt} onClick={() => onDakChange('zonnepanelen', opt)} />
-                    ))}
+                    <PicTile svg={<SvgNone/>} label="Geen" selected={config.dak.zonnepanelen === 'Geen'} onClick={() => onDakChange('zonnepanelen', 'Geen')}/>
+                    <PicTile svg={<SolarGrid cols={2} rows={2}/>} label="4" selected={config.dak.zonnepanelen === '4 panelen'} onClick={() => onDakChange('zonnepanelen', '4 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={3} rows={2}/>} label="6" selected={config.dak.zonnepanelen === '6 panelen'} onClick={() => onDakChange('zonnepanelen', '6 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={4} rows={2}/>} label="8" selected={config.dak.zonnepanelen === '8 panelen'} onClick={() => onDakChange('zonnepanelen', '8 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={3} rows={3} badge="10"/>} label="10" selected={config.dak.zonnepanelen === '10 panelen'} onClick={() => onDakChange('zonnepanelen', '10 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={3} rows={3} badge="12"/>} label="12" selected={config.dak.zonnepanelen === '12 panelen'} onClick={() => onDakChange('zonnepanelen', '12 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={4} rows={3} badge="16"/>} label="16" selected={config.dak.zonnepanelen === '16 panelen'} onClick={() => onDakChange('zonnepanelen', '16 panelen')}/>
+                    <PicTile svg={<SolarGrid cols={4} rows={3} badge="20+"/>} label="20+" selected={config.dak.zonnepanelen === '20+ panelen'} onClick={() => onDakChange('zonnepanelen', '20+ panelen')}/>
                   </div>
                 )}
                 {optGroup('Dakkapel',
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {[
-                      { opt: 'Geen dakkapel',          emoji: '🚫', short: 'Geen' },
-                      { opt: 'Kleine dakkapel',         emoji: '🪟', short: 'Klein' },
-                      { opt: 'Grote dakkapel',          emoji: '🪟', short: 'Groot' },
-                      { opt: 'Dakkapel met terras',     emoji: '🌿', short: 'Terras' },
-                      { opt: 'Meerdere dakkapellen',    emoji: '🪟', short: 'Meerdere' },
-                    ].map(({ opt, emoji, short }) => (
-                      <IconTile key={opt} emoji={emoji} label={short} selected={config.dak.dakkapel === opt} onClick={() => onDakChange('dakkapel', opt)} />
-                    ))}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                    <PicTile svg={<RoofSvg/>} label="Geen" selected={config.dak.dakkapel === 'Geen dakkapel'} onClick={() => onDakChange('dakkapel', 'Geen dakkapel')}/>
+                    <PicTile svg={<RoofSvg dormer="small"/>} label="Klein" selected={config.dak.dakkapel === 'Kleine dakkapel'} onClick={() => onDakChange('dakkapel', 'Kleine dakkapel')}/>
+                    <PicTile svg={<RoofSvg dormer="large"/>} label="Groot" selected={config.dak.dakkapel === 'Grote dakkapel'} onClick={() => onDakChange('dakkapel', 'Grote dakkapel')}/>
+                    <PicTile svg={<RoofSvg dormer="terrace"/>} label="Terras" selected={config.dak.dakkapel === 'Dakkapel met terras'} onClick={() => onDakChange('dakkapel', 'Dakkapel met terras')}/>
+                    <PicTile svg={<RoofSvg dormer="double"/>} label="Meerdere" selected={config.dak.dakkapel === 'Meerdere dakkapellen'} onClick={() => onDakChange('dakkapel', 'Meerdere dakkapellen')}/>
                   </div>
                 )}
               </div>
@@ -586,32 +728,24 @@ function Step2Scope({
               <div style={{ padding: '20px 24px 24px', borderTop: `1px solid ${T.line}` }}>
                 {optGroup('Ramen',
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {[
-                      { opt: 'Huidig behouden',  emoji: '👁️', short: 'Huidig' },
-                      { opt: 'Houten ramen',     emoji: '🪵', short: 'Hout' },
-                      { opt: 'PVC ramen wit',    emoji: '⬜', short: 'PVC wit' },
-                      { opt: 'PVC ramen zwart',  emoji: '⬛', short: 'PVC zwart' },
-                      { opt: 'Aluminium ramen',  emoji: '🔳', short: 'Alu' },
-                      { opt: 'Stalen ramen',     emoji: '🔩', short: 'Staal' },
-                      { opt: 'Panoramaramen',    emoji: '🌅', short: 'Panorama' },
-                    ].map(({ opt, emoji, short }) => (
-                      <IconTile key={opt} emoji={emoji} label={short} selected={config.gevel.ramen === opt} onClick={() => onGevelChange('ramen', opt)} />
-                    ))}
+                    <PicTile svg={<WindowSvg type="neutral"/>} label="Huidig" selected={config.gevel.ramen === 'Huidig behouden'} onClick={() => onGevelChange('ramen', 'Huidig behouden')}/>
+                    <PicTile svg={<WindowSvg type="hout"/>} label="Hout" selected={config.gevel.ramen === 'Houten ramen'} onClick={() => onGevelChange('ramen', 'Houten ramen')}/>
+                    <PicTile svg={<WindowSvg type="pvc-wit"/>} label="PVC wit" selected={config.gevel.ramen === 'PVC ramen wit'} onClick={() => onGevelChange('ramen', 'PVC ramen wit')}/>
+                    <PicTile svg={<WindowSvg type="pvc-zwart"/>} label="PVC zwart" selected={config.gevel.ramen === 'PVC ramen zwart'} onClick={() => onGevelChange('ramen', 'PVC ramen zwart')}/>
+                    <PicTile svg={<WindowSvg type="alu"/>} label="Aluminium" selected={config.gevel.ramen === 'Aluminium ramen'} onClick={() => onGevelChange('ramen', 'Aluminium ramen')}/>
+                    <PicTile svg={<WindowSvg type="staal"/>} label="Staal" selected={config.gevel.ramen === 'Stalen ramen'} onClick={() => onGevelChange('ramen', 'Stalen ramen')}/>
+                    <PicTile svg={<WindowSvg type="panorama"/>} label="Panorama" selected={config.gevel.ramen === 'Panoramaramen'} onClick={() => onGevelChange('ramen', 'Panoramaramen')}/>
                   </div>
                 )}
                 {optGroup('Voordeur',
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-                    {[
-                      { opt: 'Huidig behouden',   emoji: '👁️', short: 'Huidig' },
-                      { opt: 'Voordeur klassiek', emoji: '🚪', short: 'Klassiek' },
-                      { opt: 'Voordeur modern',   emoji: '🚪', short: 'Modern' },
-                      { opt: 'Voordeur staal',    emoji: '🔩', short: 'Staal' },
-                      { opt: 'Voordeur hout',     emoji: '🪵', short: 'Hout' },
-                      { opt: 'Draaideuren',       emoji: '🔄', short: 'Draai' },
-                      { opt: 'Schuifdeuren',      emoji: '↔️', short: 'Schuif' },
-                    ].map(({ opt, emoji, short }) => (
-                      <IconTile key={opt} emoji={emoji} label={short} selected={config.gevel.deur === opt} onClick={() => onGevelChange('deur', opt)} />
-                    ))}
+                    <PicTile svg={<DoorSvg type="neutral"/>} label="Huidig" selected={config.gevel.deur === 'Huidig behouden'} onClick={() => onGevelChange('deur', 'Huidig behouden')}/>
+                    <PicTile svg={<DoorSvg type="klassiek"/>} label="Klassiek" selected={config.gevel.deur === 'Voordeur klassiek'} onClick={() => onGevelChange('deur', 'Voordeur klassiek')}/>
+                    <PicTile svg={<DoorSvg type="modern"/>} label="Modern" selected={config.gevel.deur === 'Voordeur modern'} onClick={() => onGevelChange('deur', 'Voordeur modern')}/>
+                    <PicTile svg={<DoorSvg type="staal"/>} label="Staal" selected={config.gevel.deur === 'Voordeur staal'} onClick={() => onGevelChange('deur', 'Voordeur staal')}/>
+                    <PicTile svg={<DoorSvg type="hout"/>} label="Hout" selected={config.gevel.deur === 'Voordeur hout'} onClick={() => onGevelChange('deur', 'Voordeur hout')}/>
+                    <PicTile svg={<DoorSvg type="draai"/>} label="Draai" selected={config.gevel.deur === 'Draaideuren'} onClick={() => onGevelChange('deur', 'Draaideuren')}/>
+                    <PicTile svg={<DoorSvg type="schuif"/>} label="Schuif" selected={config.gevel.deur === 'Schuifdeuren'} onClick={() => onGevelChange('deur', 'Schuifdeuren')}/>
                   </div>
                 )}
                 {optGroup('Kleur voordeur',
